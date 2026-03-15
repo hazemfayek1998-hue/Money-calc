@@ -1,31 +1,24 @@
-const CACHE_NAME = 'moneycalc-v8';
-const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icons/102769.jpg',
-  './icons/102768.jpg'
-];
-
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
-  );
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then(keys => {
-      return Promise.all(keys.map(key => {
-        if (key !== CACHE_NAME) return caches.delete(key);
-      }));
-    })
-  );
-});
-
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then(res => res || fetch(e.request))
-  );
-});
+{
+  "name": "MoneyCalc Pro",
+  "short_name": "MoneyCalc",
+  "description": "Track clinic earnings, shifts, and payments",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ecfbf0",
+  "theme_color": "#0fa25a",
+  "icons": [
+    {
+      "src": "./icons/102769.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/102768.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
