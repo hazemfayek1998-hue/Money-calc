@@ -1,20 +1,31 @@
-{
-  "name": "MoneyCalc Pro",
-  "short_name": "MoneyCalc Pro",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#ecfbf0",
-  "theme_color": "#0fa25a",
-  "icons": [
-    {
-      "src": "icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
-}
+const CACHE_NAME = 'moneycalc-v8';
+const ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icons/102769.jpg',
+  './icons/102768.jpg'
+];
+
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then(keys => {
+      return Promise.all(keys.map(key => {
+        if (key !== CACHE_NAME) return caches.delete(key);
+      }));
+    })
+  );
+});
+
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request).then(res => res || fetch(e.request))
+  );
+});
