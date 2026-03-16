@@ -5,14 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>MoneyCalc Pro</title>
 
-<!-- PWA Manifest -->
-<link rel="manifest" href="/manifest.json">
-<!-- iOS PWA Support -->
+<!-- PWA Manifest - MUST be separate file, not data URI -->
+<link rel="manifest" href="manifest.json">
+
+<!-- iOS PWA Support - CRITICAL FOR ICONS -->
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="MoneyCalc">
 <meta name="theme-color" content="#0fa25a">
-<link rel="apple-touch-icon" href="/icons/icon-192.png">
+
+<!-- iOS Icons - MUST reference actual files, not data URIs -->
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512.png">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+
+<style>
     :root { --primary: #0fa25a; --primary-dark: #0a7d45; --danger: #e53e3e; --warning: #f59e0b; --info: #3b82f6; --purple: #8b5cf6; --bg: #f5f7fa; }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -329,7 +340,7 @@
         width: 4px;
         height: 4px;
         border-radius: 50%;
-        background: var(--primary);
+        background: var(--primary var(--primary);
     }
     .day-dot.shift { background: var(--info); }
     .day-dot.other { background: var(--purple); }
@@ -1492,23 +1503,11 @@ calcTotals();
 <script>
 // ── Service Worker Registration ──────────────────────────
 if ('serviceWorker' in navigator) {
-  const swCode = `const CACHE_NAME = 'moneycalc-v6';
-const ASSETS = ['./'];
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)));
-  self.skipWaiting();
-});
-self.addEventListener('activate', e => {
-  e.waitUntil(clients.claim());
-});
-self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
-});`;
-  const blob = new Blob([swCode], {type: 'application/javascript'});
-  const swUrl = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swUrl, {scope: './'}). 
-    then(reg => console.log('SW registered:', reg.scope)).
-    catch(err => console.warn('SW failed:', err));
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js', {scope: '/'})
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.warn('SW failed:', err));
+  });
 }
 
 // ── Install Prompt (Android) ──────────────────────────────
