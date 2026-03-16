@@ -1,4 +1,4 @@
-const CACHE_NAME = 'money-calc-v6';
+const CACHE_NAME = 'moneycalc-v6';
 const urlsToCache = [
   '/',
   '/index.html',
