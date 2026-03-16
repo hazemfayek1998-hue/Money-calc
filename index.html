@@ -4,397 +4,441 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>MoneyCalc Pro</title>
+
 <link rel="manifest" href="manifest.json">
+
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="MoneyCalc">
 <meta name="theme-color" content="#0fa25a">
+
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+
 <style>
-:root { --primary: #0fa25a; --primary-dark: #0a7d45; --danger: #e53e3e; --warning: #f59e0b; --info: #3b82f6; --purple: #8b5cf6; --bg: #f5f7fa; }
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background: var(--bg); color: #222; padding-bottom: 90px; }
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; justify-content: center; align-items: flex-end; opacity: 0; transition: opacity 0.3s; }
-.modal-overlay.active { display: flex; opacity: 1; }
-.modal-content { background: white; width: 100%; max-width: 500px; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 24px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; }
-.modal-overlay.active .modal-content { transform: translateY(0); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.modal-title { font-size: 1.2rem; font-weight: bold; color: #333; }
-.modal-close { background: #f0f0f0; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; cursor: pointer; color: #666; }
-.form-group { margin-bottom: 20px; }
-.form-label { display: block; font-size: 13px; font-weight: 600; color: #666; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-.form-input { width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; outline: none; transition: all 0.2s; }
-.form-input:focus { border-color: var(--primary); }
-.choice-group { display: flex; gap: 10px; flex-wrap: wrap; }
-.choice-chip { flex: 1; min-width: 70px; padding: 12px 8px; border: 2px solid #e0e0e0; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.2s; background: white; }
-.choice-chip.active { border-color: var(--primary); background: #f0fdf4; color: var(--primary); font-weight: 600; }
-.choice-chip .icon { font-size: 20px; margin-bottom: 4px; display: block; }
-.choice-chip .label { font-size: 12px; }
-.btn-full { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-.btn-full:active { transform: scale(0.98); background: var(--primary-dark); }
-.top-bar { background: var(--primary); color: white; padding: 16px; font-size: 18px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
-.top-summary { background: var(--primary); color: white; display: flex; justify-content: space-around; padding: 10px 0 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; margin-bottom: 10px; }
-.top-summary .tsb { text-align: center; }
-.top-summary .tsb .lbl { font-size: 11px; opacity: 0.9; text-transform: uppercase; }
-.top-summary .tsb .val { font-size: 1.2rem; font-weight: bold; margin-top: 4px; }
-.container { padding: 16px; max-width: 600px; margin: 0 auto; }
-.card { background: white; border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-.card h2 { margin: 0 0 14px; font-size: 1.1rem; color: #333; display: flex; align-items: center; gap: 8px;}
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-input, select, textarea { width: 100%; padding: 12px; margin: 6px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; outline: none; background: #fafafa; }
-input:focus, select:focus { border-color: var(--primary); background: white;}
-.preview-pane { background: #f4fdf8; padding: 14px; border-radius: 12px; margin: 14px 0; border-left: 4px solid var(--primary); }
-.preview-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 14px; }
-.status-toggle { display: flex; background: #f0f0f0; border-radius: 10px; padding: 4px; margin: 10px 0; }
-.status-option { flex: 1; text-align: center; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; color: #666; }
-.status-option.active { background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-.status-option.pending.active { color: var(--warning); }
-.status-option.received.active { color: var(--primary); }
-button.primary { display: block; width: 100%; padding: 14px; font-size: 16px; border: none; border-radius: 12px; background: var(--primary); color: white; cursor: pointer; margin: 12px 0 4px; font-weight: bold; }
-button.secondary { display: block; width: 100%; padding: 12px; font-size: 14px; border: 1px solid var(--primary); border-radius: 12px; background: white; color: var(--primary); cursor: pointer; margin: 8px 0; font-weight: 600; }
-button.danger { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 18px; padding: 4px 8px; }
-button.sm-btn { display: inline-block; padding: 8px 16px; font-size: 13px; border: none; border-radius: 8px; background: var(--primary); color: white; cursor: pointer; font-weight: 600; }
-button.sm-btn.outline { background: white; border: 1px solid var(--primary); color: var(--primary); }
-.row-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.calendar-title { font-size: 18px; font-weight: bold; color: #333; }
-.calendar-nav { background: #f0f0f0; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
-.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-.calendar-day-header { text-align: center; font-size: 12px; font-weight: 600; color: #888; padding: 8px 0; }
-.calendar-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; transition: all 0.2s; position: relative; background: #f9f9f9; font-size: 14px; }
-.calendar-day:hover { background: #e6f7ed; }
-.calendar-day.other-month { color: #ccc; background: transparent; }
-.calendar-day.today { border: 2px solid var(--primary); font-weight: bold; }
-.calendar-day.has-data { background: #d1fae5; font-weight: 600; color: var(--primary-dark); }
-.calendar-day.selected { background: var(--primary); color: white; }
-.day-indicators { display: flex; gap: 2px; position: absolute; bottom: 4px; }
-.day-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--primary); }
-.day-dot.shift { background: var(--info); }
-.day-dot.other { background: var(--purple); }
-.day-detail { margin-top: 16px; padding-top: 16px; border-top: 2px solid #f0f0f0; }
-.day-detail-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #333; }
-.income-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f9f9f9; border-radius: 10px; margin-bottom: 8px; border-left: 3px solid var(--primary); }
-.income-item.shift { border-left-color: var(--info); }
-.income-item.other { border-left-color: var(--purple); }
-.income-item-info { flex: 1; }
-.income-item-title { font-weight: 600; font-size: 14px; }
-.income-item-sub { font-size: 12px; color: #666; margin-top: 2px; }
-.income-item-amount { font-weight: bold; font-size: 16px; }
-.badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-.badge.pending { background: #fef3c7; color: #92400e; }
-.badge.received { background: #d1fae5; color: #065f46; }
-.nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; border-top: 1px solid #e8e8e8; z-index: 100; padding-bottom: env(safe-area-inset-bottom, 0px); }
-.nav-bar button { background: none; color: #aaa; flex: 1; border: none; border-top: 3px solid transparent; padding: 10px 2px 8px; font-size: 11px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.nav-bar button.active { color: var(--primary); border-top-color: var(--primary); font-weight: 600;}
-.nav-bar button .icon { font-size: 20px; }
-.empty-state { text-align: center; padding: 40px 20px; color: #999; }
-.empty-state-icon { font-size: 48px; margin-bottom: 12px; }
-.type-selector { display: flex; gap: 8px; margin-bottom: 12px; }
-.type-btn { flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 12px; background: white; cursor: pointer; text-align: center; transition: all 0.2s; }
-.type-btn.active { border-color: var(--primary); background: #f0fdf4; }
-.type-btn .icon { font-size: 24px; display: block; margin-bottom: 4px; }
-.type-btn .label { font-size: 12px; font-weight: 600; }
-.verify-card { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
-.verify-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.verify-title { font-weight: bold; color: #333; }
-.verify-amount { font-size: 1.2rem; font-weight: bold; color: var(--warning); }
-.verify-details { font-size: 13px; color: #666; margin-bottom: 12px; }
-.summary-row { display: flex; justify-content: space-between; padding: 10px 4px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
-.summary-row:last-child { border-bottom: none; }
-.job-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #f0f0f0; }
-.job-item:last-child { border-bottom: none; }
-.job-info { flex: 1; }
-.job-info strong { display: block; font-size: 15px; margin-bottom: 2px; }
-.job-info span { font-size: 12px; color: #888; }
-.calc-toggle { display: flex; background: #f0f0f0; border-radius: 8px; padding: 3px; margin-bottom: 12px; }
-.calc-option { flex: 1; text-align: center; padding: 8px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: all 0.2s; color: #666; }
-.calc-option.active { background: white; color: var(--primary); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-.optional-section { border-top: 1px dashed #ddd; margin-top: 12px; padding-top: 12px; }
-.optional-label { font-size: 12px; color: #888; margin-bottom: 8px; display: block; }
-.stats-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; justify-content: center; align-items: flex-end; opacity: 0; transition: opacity 0.3s; }
-.stats-modal-overlay.active { display: flex; opacity: 1; }
-.stats-modal-content { background: white; width: 100%; max-width: 600px; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 24px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; }
-.stats-modal-overlay.active .stats-modal-content { transform: translateY(0); }
-.stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 2px solid #f0f0f0; }
-.stats-title { font-size: 1.3rem; font-weight: bold; color: #333; }
-.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-.stats-box { background: #f9f9f9; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid #e8e8e8; }
-.stats-box.primary { border-color: var(--primary); background: #f0fdf4; }
-.stats-box.warning { border-color: var(--warning); background: #fffbeb; }
-.stats-box.info { border-color: var(--info); background: #eff6ff; }
-.stats-box.purple { border-color: var(--purple); background: #f5f3ff; }
-.stats-value { font-size: 1.5rem; font-weight: bold; color: #333; margin-bottom: 4px; }
-.stats-label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
-.comparison-section { margin-bottom: 24px; }
-.comparison-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #333; display: flex; align-items: center; gap: 8px; }
-.source-bar-item { margin-bottom: 16px; }
-.source-bar-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px; }
-.source-bar-name { font-weight: 600; }
-.source-bar-amount { color: var(--primary); font-weight: bold; }
-.source-bar-wrapper { background: #e8e8e8; border-radius: 8px; height: 24px; overflow: hidden; position: relative; }
-.source-bar-fill { height: 100%; border-radius: 8px; transition: width 0.5s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: white; font-size: 12px; font-weight: bold; }
-.source-bar-percent { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: bold; color: #666; }
-.productivity-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-.productivity-box { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 16px 8px; text-align: center; color: white; }
-.productivity-value { font-size: 1.3rem; font-weight: bold; margin-bottom: 4px; }
-.productivity-label { font-size: 11px; opacity: 0.9; }
-.stats-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; }
-.stats-tab { padding: 8px 16px; border: none; background: none; font-size: 14px; font-weight: 600; color: #666; cursor: pointer; border-radius: 8px; transition: all 0.2s; }
-.stats-tab.active { background: var(--primary); color: white; }
-.stats-tab-content { display: none; }
-.stats-tab-content.active { display: block; }
-.trend-chart { display: flex; align-items: flex-end; justify-content: space-around; height: 150px; padding: 20px 0; gap: 8px; }
-.trend-column { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.trend-bar { width: 100%; background: var(--primary); border-radius: 6px 6px 0 0; min-height: 4px; transition: height 0.5s ease; }
-.trend-label { font-size: 11px; color: #666; text-align: center; }
-.stats-close { background: #f0f0f0; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 20px; cursor: pointer; color: #666; display: flex; align-items: center; justify-content: center; }
-.empty-stats { text-align: center; padding: 40px; color: #999; }
-.productivity-section { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
-.checkbox-wrapper { display: flex; align-items: center; gap: 8px; margin: 12px 0; cursor: pointer; }
-.checkbox-wrapper input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--primary); }
-.checkbox-wrapper label { font-size: 14px; color: #555; cursor: pointer; }
-.optional-fields-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #ddd; }
-@media (max-width: 480px) {
-.optional-fields-grid { grid-template-columns: 1fr; }
-.productivity-grid { grid-template-columns: 1fr; }
-.stats-grid { grid-template-columns: 1fr; }
-}
+    :root { --primary: #0fa25a; --primary-dark: #0a7d45; --danger: #e53e3e; --warning: #f59e0b; --info: #3b82f6; --purple: #8b5cf6; --bg: #f5f7fa; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background: var(--bg); color: #222; padding-bottom: 90px; }
+    
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; justify-content: center; align-items: flex-end; opacity: 0; transition: opacity 0.3s; }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    .modal-content { background: white; width: 100%; max-width: 500px; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 24px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; }
+    .modal-overlay.active .modal-content { transform: translateY(0); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-title { font-size: 1.2rem; font-weight: bold; color: #333; }
+    .modal-close { background: #f0f0f0; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; cursor: pointer; color: #666; }
+    
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; color: #666; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-input { width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; outline: none; transition: all 0.2s; }
+    .form-input:focus { border-color: var(--primary); }
+    
+    .choice-group { display: flex; gap: 10px; flex-wrap: wrap; }
+    .choice-chip { flex: 1; min-width: 70px; padding: 12px 8px; border: 2px solid #e0e0e0; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.2s; background: white; }
+    .choice-chip.active { border-color: var(--primary); background: #f0fdf4; color: var(--primary); font-weight: 600; }
+    .choice-chip .icon { font-size: 20px; margin-bottom: 4px; display: block; }
+    .choice-chip .label { font-size: 12px; }
+    
+    .btn-full { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    .btn-full:active { transform: scale(0.98); background: var(--primary-dark); }
+    
+    .top-bar { background: var(--primary); color: white; padding: 16px; font-size: 18px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+    .top-summary { background: var(--primary); color: white; display: flex; justify-content: space-around; padding: 10px 0 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; margin-bottom: 10px; }
+    .top-summary .tsb { text-align: center; }
+    .top-summary .tsb .lbl { font-size: 11px; opacity: 0.9; text-transform: uppercase; }
+    .top-summary .tsb .val { font-size: 1.2rem; font-weight: bold; margin-top: 4px; }
+    
+    .container { padding: 16px; max-width: 600px; margin: 0 auto; }
+    
+    .card { background: white; border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .card h2 { margin: 0 0 14px; font-size: 1.1rem; color: #333; display: flex; align-items: center; gap: 8px;}
+    
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    
+    input, select, textarea { width: 100%; padding: 12px; margin: 6px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; outline: none; background: #fafafa; }
+    input:focus, select:focus { border-color: var(--primary); background: white;}
+    
+    .preview-pane { background: #f4fdf8; padding: 14px; border-radius: 12px; margin: 14px 0; border-left: 4px solid var(--primary); }
+    .preview-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 14px; }
+    
+    .status-toggle { display: flex; background: #f0f0f0; border-radius: 10px; padding: 4px; margin: 10px 0; }
+    .status-option { flex: 1; text-align: center; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; color: #666; }
+    .status-option.active { background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .status-option.pending.active { color: var(--warning); }
+    .status-option.received.active { color: var(--primary); }
+    
+    button.primary { display: block; width: 100%; padding: 14px; font-size: 16px; border: none; border-radius: 12px; background: var(--primary); color: white; cursor: pointer; margin: 12px 0 4px; font-weight: bold; }
+    button.secondary { display: block; width: 100%; padding: 12px; font-size: 14px; border: 1px solid var(--primary); border-radius: 12px; background: white; color: var(--primary); cursor: pointer; margin: 8px 0; font-weight: 600; }
+    button.danger { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 18px; padding: 4px 8px; }
+    button.sm-btn { display: inline-block; padding: 8px 16px; font-size: 13px; border: none; border-radius: 8px; background: var(--primary); color: white; cursor: pointer; font-weight: 600; }
+    button.sm-btn.outline { background: white; border: 1px solid var(--primary); color: var(--primary); }
+    
+    .row-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .calendar-title { font-size: 18px; font-weight: bold; color: #333; }
+    .calendar-nav { background: #f0f0f0; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .calendar-day-header { text-align: center; font-size: 12px; font-weight: 600; color: #888; padding: 8px 0; }
+    .calendar-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; transition: all 0.2s; position: relative; background: #f9f9f9; font-size: 14px; min-height: 40px; }
+    .calendar-day:hover { background: #e6f7ed; }
+    .calendar-day.other-month { color: #ccc; background: transparent; }
+    .calendar-day.today { border: 2px solid var(--primary); font-weight: bold; }
+    .calendar-day.has-data { background: #d1fae5; font-weight: 600; color: var(--primary-dark); }
+    .calendar-day.selected { background: var(--primary); color: white; }
+    
+    .day-indicators { display: flex; gap: 2px; position: absolute; bottom: 4px; }
+    .day-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--primary); }
+    .day-dot.shift { background: var(--info); }
+    .day-dot.other { background: var(--purple); }
+    
+    .day-detail { margin-top: 16px; padding-top: 16px; border-top: 2px solid #f0f0f0; }
+    .day-detail-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #333; }
+    .income-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f9f9f9; border-radius: 10px; margin-bottom: 8px; border-left: 3px solid var(--primary); }
+    .income-item.shift { border-left-color: var(--info); }
+    .income-item.other { border-left-color: var(--purple); }
+    .income-item-info { flex: 1; }
+    .income-item-title { font-weight: 600; font-size: 14px; }
+    .income-item-sub { font-size: 12px; color: #666; margin-top: 2px; }
+    .income-item-amount { font-weight: bold; font-size: 16px; }
+    
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+    .badge.pending { background: #fef3c7; color: #92400e; }
+    .badge.received { background: #d1fae5; color: #065f46; }
+    
+    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; border-top: 1px solid #e8e8e8; z-index: 100; padding-bottom: env(safe-area-inset-bottom, 0px); }
+    .nav-bar button { background: none; color: #aaa; flex: 1; border: none; border-top: 3px solid transparent; padding: 10px 2px 8px; font-size: 11px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .nav-bar button.active { color: var(--primary); border-top-color: var(--primary); font-weight: 600;}
+    .nav-bar button .icon { font-size: 20px; }
+    
+    .empty-state { text-align: center; padding: 40px 20px; color: #999; }
+    .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+    
+    .type-selector { display: flex; gap: 8px; margin-bottom: 12px; }
+    .type-btn { flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 12px; background: white; cursor: pointer; text-align: center; transition: all 0.2s; }
+    .type-btn.active { border-color: var(--primary); background: #f0fdf4; }
+    .type-btn .icon { font-size: 24px; display: block; margin-bottom: 4px; }
+    .type-btn .label { font-size: 12px; font-weight: 600; }
+    
+    .verify-card { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .verify-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .verify-title { font-weight: bold; color: #333; }
+    .verify-amount { font-size: 1.2rem; font-weight: bold; color: var(--warning); }
+    .verify-details { font-size: 13px; color: #666; margin-bottom: 12px; }
+    
+    .summary-row { display: flex; justify-content: space-between; padding: 10px 4px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    .summary-row:last-child { border-bottom: none; }
+    
+    .job-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+    .job-item:last-child { border-bottom: none; }
+    .job-info { flex: 1; }
+    .job-info strong { display: block; font-size: 15px; margin-bottom: 2px; }
+    .job-info span { font-size: 12px; color: #888; }
+    
+    .calc-toggle { display: flex; background: #f0f0f0; border-radius: 8px; padding: 3px; margin-bottom: 12px; }
+    .calc-option { flex: 1; text-align: center; padding: 8px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: all 0.2s; color: #666; }
+    .calc-option.active { background: white; color: var(--primary); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    
+    .optional-section { border-top: 1px dashed #ddd; margin-top: 12px; padding-top: 12px; }
+    .optional-label { font-size: 12px; color: #888; margin-bottom: 8px; display: block; }
+    
+    .work-day-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f9f9f9; border-radius: 8px; margin-bottom: 6px; font-size: 14px; }
+    .work-day-date { font-weight: 600; color: var(--primary); }
+    .work-day-amount { font-weight: bold; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+    .stat-box { background: #f0fdf4; padding: 12px; border-radius: 10px; text-align: center; }
+    .stat-value { font-size: 1.2rem; font-weight: bold; color: var(--primary); }
+    .stat-label { font-size: 11px; color: #666; margin-top: 4px; }
+    
+    .dot-chart { display: flex; gap: 3px; margin-top: 8px; flex-wrap: wrap; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
+    .dot.pending { background: var(--warning); }
+    
+    .export-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
 </style>
 </head>
 <body>
 
+<!-- ADD SOURCE MODAL -->
 <div class="modal-overlay" id="addSourceModal">
-<div class="modal-content">
-<div class="modal-header">
-<div class="modal-title" id="modalTitle">🏥 Add Clinic</div>
-<button class="modal-close" onclick="closeModal()">×</button>
-</div>
-<input type="hidden" id="modalSourceType" value="clinic">
-<div class="form-group">
-<label class="form-label">Name</label>
-<input type="text" class="form-input" id="modalName" placeholder="e.g. City Medical Center">
-</div>
-<div class="form-group" id="formulaSection">
-<label class="form-label">Pay Rule</label>
-<div class="choice-group">
-<div class="choice-chip active" onclick="selectRule('percent', this)" id="rule-percent"><span class="icon">%</span><span class="label">Percent</span></div>
-<div class="choice-chip" onclick="selectRule('split', this)" id="rule-split"><span class="icon">✂️</span><span class="label">Split</span></div>
-<div class="choice-chip" onclick="selectRule('fixed', this)" id="rule-fixed"><span class="icon">⚡</span><span class="label">Fixed</span></div>
-<div class="choice-chip" onclick="selectRule('custom', this)" id="rule-custom"><span class="icon">🔧</span><span class="label">Custom</span></div>
-</div>
-</div>
-<div class="form-group" id="basePayGroup" style="display:none;">
-<label class="form-label">Base Pay Amount</label>
-<input type="number" class="form-input" id="modalBasePay" placeholder="500" value="0">
-</div>
-<div class="form-group" id="customFormulaGroup" style="display:none;">
-<label class="form-label">Custom Formula (E = Earnings)</label>
-<input type="text" class="form-input" id="modalCustomFormula" placeholder="E * 0.6 + 50">
-</div>
-<div class="form-group" id="percentGroup">
-<label class="form-label" id="amountLabel">Percentage Rate</label>
-<input type="number" class="form-input" id="modalAmount" placeholder="50" value="50">
-<div class="small" style="margin-top:4px; color:#888" id="amountHint">Enter percentage (e.g. 50 for 50%)</div>
-</div>
-<div class="form-group" id="payTypeGroup">
-<label class="form-label">Payment Schedule</label>
-<div class="choice-group">
-<div class="choice-chip active" onclick="selectPayType('daily', this)" id="pay-daily"><span class="icon">📅</span><span class="label">Daily</span></div>
-<div class="choice-chip" onclick="selectPayType('monthly', this)" id="pay-monthly"><span class="icon">📆</span><span class="label">Monthly</span></div>
-</div>
-</div>
-<div class="form-group" id="reminderGroup" style="display:none;">
-<label class="form-label">Expected Payment Day</label>
-<input type="number" class="form-input" id="modalReminderDay" placeholder="28" value="28" min="1" max="31">
-</div>
-<button class="btn-full" onclick="saveSource()">✅ Save</button>
-</div>
-</div>
-
-<div class="stats-modal-overlay" id="statsModal">
-<div class="stats-modal-content">
-<div class="stats-header">
-<div class="stats-title">📊 Statistics & Analytics</div>
-<button class="stats-close" onclick="closeStatsModal()">×</button>
-</div>
-<div class="stats-tabs">
-<button class="stats-tab active" onclick="switchStatsTab('overview', this)">Overview</button>
-<button class="stats-tab" onclick="switchStatsTab('sources', this)">By Source</button>
-<button class="stats-tab" onclick="switchStatsTab('productivity', this)">Productivity</button>
-</div>
-<div class="stats-tab-content active" id="tab-overview">
-<div class="stats-grid">
-<div class="stats-box primary"><div class="stats-value" id="statTotalEarnings">$0</div><div class="stats-label">Total Earnings</div></div>
-<div class="stats-box"><div class="stats-value" id="statTotalEntries">0</div><div class="stats-label">Total Entries</div></div>
-<div class="stats-box warning"><div class="stats-value" id="statPendingAmount">$0</div><div class="stats-label">Pending</div></div>
-<div class="stats-box info"><div class="stats-value" id="statAvgPerEntry">$0</div><div class="stats-label">Avg Per Entry</div></div>
-</div>
-<div class="comparison-section"><div class="comparison-title">📈 7-Day Trend</div><div class="trend-chart" id="trendChart"><div class="empty-stats">No data available</div></div></div>
-<div class="comparison-section"><div class="comparison-title">🏆 Top Performing Sources</div><div id="topSourcesList"><div class="empty-stats">Add entries to see source comparison</div></div></div>
-</div>
-<div class="stats-tab-content" id="tab-sources">
-<div class="comparison-section"><div class="comparison-title">💰 Income by Source</div><div id="sourceComparisonList"><div class="empty-stats">No source data available</div></div></div>
-<div class="comparison-section"><div class="comparison-title">📊 Source Distribution</div><div class="trend-chart" id="sourceDistributionChart"><div class="empty-stats">No data available</div></div></div>
-</div>
-<div class="stats-tab-content" id="tab-productivity">
-<div class="productivity-section" id="productivitySection" style="display: none;">
-<div class="comparison-title" style="margin-top: 0;">🏥 Clinical Productivity</div>
-<div class="productivity-grid">
-<div class="productivity-box"><div class="productivity-value" id="statTotalPatients">0</div><div class="productivity-label">Patients Seen</div></div>
-<div class="productivity-box"><div class="productivity-value" id="statTotalEchos">0</div><div class="productivity-label">Echos Done</div></div>
-<div class="productivity-box"><div class="productivity-value" id="statAvgPerPatient">$0</div><div class="productivity-label">$/Patient</div></div>
-</div>
-<div class="stats-grid" style="margin-top: 16px;">
-<div class="stats-box purple"><div class="stats-value" id="statTotalHours">0</div><div class="stats-label">Total Hours</div></div>
-<div class="stats-box info"><div class="stats-value" id="statAvgPerHour">$0</div><div class="stats-label">Avg $/Hour</div></div>
-</div>
-</div>
-<div class="comparison-section" id="clinicProductivityList"><div class="comparison-title">🏥 Clinic Performance</div><div id="clinicStatsList"><div class="empty-stats">No clinic data with productivity metrics</div></div></div>
-<div class="comparison-section" id="shiftProductivityList"><div class="comparison-title">⏰ Shift Performance</div><div id="shiftStatsList"><div class="empty-stats">No shift data with hours recorded</div></div></div>
-</div>
-</div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title" id="modalTitle">🏥 Add Clinic</div>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <input type="hidden" id="modalSourceType" value="clinic">
+        <div class="form-group">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-input" id="modalName" placeholder="e.g. City Medical Center">
+        </div>
+        <div class="form-group" id="formulaSection">
+            <label class="form-label">Pay Rule</label>
+            <div class="choice-group">
+                <div class="choice-chip active" onclick="selectRule('percent', this)" id="rule-percent">
+                    <span class="icon">%</span><span class="label">Percent</span>
+                </div>
+                <div class="choice-chip" onclick="selectRule('split', this)" id="rule-split">
+                    <span class="icon">✂️</span><span class="label">Split</span>
+                </div>
+                <div class="choice-chip" onclick="selectRule('fixed', this)" id="rule-fixed">
+                    <span class="icon">⚡</span><span class="label">Fixed</span>
+                </div>
+                <div class="choice-chip" onclick="selectRule('custom', this)" id="rule-custom">
+                    <span class="icon">🔧</span><span class="label">Custom</span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group" id="basePayGroup" style="display:none;">
+            <label class="form-label">Base Pay Amount</label>
+            <input type="number" class="form-input" id="modalBasePay" placeholder="500" value="0">
+        </div>
+        <div class="form-group" id="customFormulaGroup" style="display:none;">
+            <label class="form-label">Custom Formula (E = Earnings)</label>
+            <input type="text" class="form-input" id="modalCustomFormula" placeholder="E * 0.6 + 50">
+        </div>
+        <div class="form-group" id="percentGroup">
+            <label class="form-label" id="amountLabel">Percentage Rate</label>
+            <input type="number" class="form-input" id="modalAmount" placeholder="50" value="50">
+            <div class="small" style="margin-top:4px; color:#888" id="amountHint">Enter percentage (e.g. 50 for 50%)</div>
+        </div>
+        <div class="form-group" id="payTypeGroup">
+            <label class="form-label">Payment Schedule</label>
+            <div class="choice-group">
+                <div class="choice-chip active" onclick="selectPayType('daily', this)" id="pay-daily">
+                    <span class="icon">📅</span><span class="label">Daily</span>
+                </div>
+                <div class="choice-chip" onclick="selectPayType('monthly', this)" id="pay-monthly">
+                    <span class="icon">📆</span><span class="label">Monthly</span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group" id="reminderGroup" style="display:none;">
+            <label class="form-label">Expected Payment Day</label>
+            <input type="number" class="form-input" id="modalReminderDay" placeholder="28" value="28" min="1" max="31">
+        </div>
+        <button class="btn-full" onclick="saveSource()">✅ Save</button>
+    </div>
 </div>
 
+<!-- SOURCE DETAIL MODAL (Days Worked Per Place) -->
+<div class="modal-overlay" id="sourceDetailModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title" id="sourceDetailTitle">🏥 Work History</div>
+            <button class="modal-close" onclick="closeSourceDetail()">×</button>
+        </div>
+        <div class="stats-grid" id="sourceStats">
+            <div class="stat-box">
+                <div class="stat-value" id="statTotalDays">0</div>
+                <div class="stat-label">Days Worked</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="statTotalEarnings">$0</div>
+                <div class="stat-label">Total Earnings</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="statPending">$0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Filter by Month</label>
+            <select id="sourceMonthFilter" onchange="renderSourceDays()">
+                <option value="all">All Time</option>
+            </select>
+        </div>
+        <div id="sourceDaysList" style="max-height: 300px; overflow-y: auto;"></div>
+    </div>
+</div>
+
+<!-- TOP BAR -->
 <div class="top-bar">
-<span>💰 MoneyCalc Pro</span>
-<div style="display: flex; gap: 12px; align-items: center;">
-<button onclick="openStatsModal()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 6px;">📊 Stats</button>
-<div id="reminderBadge" style="display:none"><span style="background:#f56565; color:white; border-radius:50%; font-size:10px; width:18px; height:18px; display:flex; align-items:center; justify-content:center;" id="reminderCount">!</span></div>
-</div>
+    <span>💰 MoneyCalc Pro</span>
+    <div id="reminderBadge" style="display:none">
+        <span style="background:#f56565; color:white; border-radius:50%; font-size:10px; width:18px; height:18px; display:flex; align-items:center; justify-content:center;" id="reminderCount">!</span>
+    </div>
 </div>
 
+<!-- TOP SUMMARY -->
 <div class="top-summary" id="topSummary">
-<div class="tsb"><div class="lbl">Received</div><div class="val" id="receivedTotal">$0</div></div>
-<div class="tsb"><div class="lbl">Pending</div><div class="val" id="pendingTotal" style="color: #fcd34d;">$0</div></div>
-<div class="tsb"><div class="lbl">This Month</div><div class="val" id="monthTotal">$0</div></div>
+    <div class="tsb">
+        <div class="lbl">Received</div>
+        <div class="val" id="receivedTotal">$0</div>
+    </div>
+    <div class="tsb">
+        <div class="lbl">Pending</div>
+        <div class="val" id="pendingTotal" style="color: #fcd34d;">$0</div>
+    </div>
+    <div class="tsb">
+        <div class="lbl">This Month</div>
+        <div class="val" id="monthTotal">$0</div>
+    </div>
 </div>
 
 <div class="container">
 
-<section id="sec-home">
-<div class="card">
-<div class="calendar-header">
-<button class="calendar-nav" onclick="changeMonth(-1)">‹</button>
-<div class="calendar-title" id="calendarTitle">September 2024</div>
-<button class="calendar-nav" onclick="changeMonth(1)">›</button>
-</div>
-<div class="calendar-grid" id="calendarGrid"></div>
-<div class="day-detail" id="dayDetail" style="display:none;">
-<div class="day-detail-title" id="detailDate">Today's Earnings</div>
-<div id="detailContent"></div>
-</div>
-</div>
-<div class="card">
-<h2>📊 Monthly Sources</h2>
-<div id="monthSources"></div>
-</div>
-</section>
+    <!-- HOME / CALENDAR -->
+    <section id="sec-home">
+        <div class="card">
+            <div class="calendar-header">
+                <button class="calendar-nav" onclick="changeMonth(-1)">‹</button>
+                <div class="calendar-title" id="calendarTitle">September 2024</div>
+                <button class="calendar-nav" onclick="changeMonth(1)">›</button>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+            <div class="day-detail" id="dayDetail" style="display:none;">
+                <div class="day-detail-title" id="detailDate">Today's Earnings</div>
+                <div id="detailContent"></div>
+            </div>
+        </div>
+        <div class="card">
+            <h2>📊 Monthly Sources</h2>
+            <div id="monthSources"></div>
+        </div>
+    </section>
 
-<section id="sec-add" style="display:none">
-<div class="card">
-<h2>➕ Add Earnings</h2>
-<div class="type-selector">
-<div class="type-btn active" onclick="selectEntryType('clinic', this)"><span class="icon">🏥</span><span class="label">Clinic</span></div>
-<div class="type-btn" onclick="selectEntryType('shift', this)"><span class="icon">⏰</span><span class="label">Shift</span></div>
-<div class="type-btn" onclick="selectEntryType('other', this)"><span class="icon">⭐</span><span class="label">Other</span></div>
-</div>
-<input type="hidden" id="editIdx" value="">
-<input type="hidden" id="entryType" value="clinic">
-<input type="date" id="recDate">
-<div id="clinicFields">
-<select id="recClinic" onchange="calcPreview()"><option value="">-- Select Clinic --</option></select>
-<input type="number" id="recEarnings" placeholder="Total Clinic Revenue (E)" inputmode="decimal" oninput="calcPreview()">
-<div class="checkbox-wrapper" onclick="toggleOptionalFields('clinic')">
-<input type="checkbox" id="showClinicOptional">
-<label for="showClinicOptional">Add patient & echo counts</label>
-</div>
-<div class="optional-fields-grid" id="clinicOptionalFields" style="display: none;">
-<input type="number" id="recPatients" placeholder="Patients Seen" inputmode="numeric" oninput="calcPreview()">
-<input type="number" id="recEchos" placeholder="Echos Done" inputmode="numeric" oninput="calcPreview()">
-<input type="number" id="recClinicHours" placeholder="Hours" inputmode="decimal" step="0.5" oninput="calcPreview()">
-</div>
-</div>
-<div id="shiftFields" style="display:none;">
-<select id="recShift" onchange="fillShiftTemplate()"><option value="">-- Select Shift Template (Optional) --</option></select>
-<input type="text" id="recShiftName" placeholder="Shift Name (e.g. Night Shift, ER Cover)">
-<div class="calc-toggle">
-<div class="calc-option active" onclick="selectShiftCalc('fixed', this)" id="calc-fixed">Fixed Amount</div>
-<div class="calc-option" onclick="selectShiftCalc('hourly', this)" id="calc-hourly">By Hours</div>
-</div>
-<div id="shiftFixedInput"><input type="number" id="recShiftFixed" placeholder="Total Shift Pay (e.g. 3000)" inputmode="decimal" oninput="calcPreview()"></div>
-<div id="shiftHourlyInput" style="display:none;"><div class="grid"><input type="number" id="recShiftHours" placeholder="Hours Worked" inputmode="decimal" oninput="calcPreview()"><input type="number" id="recShiftRate" placeholder="Hourly Rate" inputmode="decimal" oninput="calcPreview()"></div></div>
-<div class="checkbox-wrapper" onclick="toggleOptionalFields('shift')">
-<input type="checkbox" id="showShiftOptional">
-<label for="showShiftOptional">Add patient & echo counts</label>
-</div>
-<div class="optional-fields-grid" id="shiftOptionalFields" style="display: none;">
-<input type="number" id="recShiftPatients" placeholder="Patients Seen" inputmode="numeric" oninput="calcPreview()">
-<input type="number" id="recShiftEchos" placeholder="Echos Done" inputmode="numeric" oninput="calcPreview()">
-</div>
-<div class="optional-section">
-<span class="optional-label">💰 Bonus (Optional)</span>
-<div class="grid"><input type="number" id="recBonusAmount" placeholder="Bonus Amount" inputmode="decimal" oninput="calcPreview()"><input type="text" id="recBonusReason" placeholder="Reason (e.g. weekend, holiday)"></div>
-</div>
-</div>
-<div id="otherFields" style="display:none;">
-<input type="text" id="recOtherName" placeholder="Source Name (e.g. Consultation, Gift)">
-<input type="number" id="recOtherAmount" placeholder="Amount Earned" inputmode="decimal" oninput="calcPreview()">
-<input type="text" id="recOtherDesc" placeholder="Description (optional)">
-</div>
-<input type="number" id="recFees" placeholder="Fees / Deductions" inputmode="decimal" oninput="calcPreview()">
-<input type="text" id="recNotes" placeholder="Notes (optional)">
-<div class="form-label" style="margin-top: 10px;">Payment Status</div>
-<div class="status-toggle">
-<div class="status-option pending active" onclick="selectStatus('pending')" id="status-pending">⏳ Pending</div>
-<div class="status-option received" onclick="selectStatus('received')" id="status-received">✅ Received</div>
-</div>
-<div class="preview-pane">
-<div class="preview-row"><span class="lbl">Your Earnings:</span><span class="val net" id="netVal">$0.00</span></div>
-<div class="preview-row" id="productivityPreview" style="display: none; font-size: 12px; color: #666; margin-top: 8px;"><span id="productivityDetails"></span></div>
-</div>
-<button class="primary" onclick="saveRecord()">💾 Save Record</button>
-<button class="secondary" onclick="clearRecordForm()">Clear</button>
-</div>
-</section>
+    <!-- ADD RECORD -->
+    <section id="sec-add" style="display:none">
+        <div class="card">
+            <h2>➕ Add Earnings</h2>
+            <div class="type-selector">
+                <div class="type-btn active" onclick="selectEntryType('clinic', this)">
+                    <span class="icon">🏥</span><span class="label">Clinic</span>
+                </div>
+                <div class="type-btn" onclick="selectEntryType('shift', this)">
+                    <span class="icon">⏰</span><span class="label">Shift</span>
+                </div>
+                <div class="type-btn" onclick="selectEntryType('other', this)">
+                    <span class="icon">⭐</span><span class="label">Other</span>
+                </div>
+            </div>
+            <input type="hidden" id="editIdx" value="">
+            <input type="hidden" id="entryType" value="clinic">
+            
+            <div class="grid" style="margin-bottom: 10px;">
+                <input type="date" id="recDate">
+                <input type="number" id="recPatients" placeholder="Patients (optional)" inputmode="decimal">
+            </div>
+            <div class="grid" style="margin-bottom: 10px;">
+                <input type="number" id="recHours" placeholder="Hours (optional)" inputmode="decimal">
+                <input type="number" id="recEchos" placeholder="Echos (optional)" inputmode="decimal">
+            </div>
 
-<section id="sec-verify" style="display:none">
-<div class="card">
-<h2>🔍 Pending Payments</h2>
-<div id="verifyList"></div>
-</div>
-</section>
+            <div id="clinicFields">
+                <select id="recClinic" onchange="calcPreview()">
+                    <option value="">-- Select Clinic --</option>
+                </select>
+                <input type="number" id="recEarnings" placeholder="Total Clinic Revenue (E)" inputmode="decimal" oninput="calcPreview()">
+            </div>
 
-<section id="sec-settings" style="display:none">
-<div class="card">
-<div class="row-between"><h2>🏥 Clinics</h2><button class="sm-btn" onclick="openModal('clinic')">+ Add</button></div>
-<div id="clinicsList"></div>
-</div>
-<div class="card">
-<div class="row-between"><h2>⏰ Shift Templates</h2><button class="sm-btn" onclick="openModal('shift')">+ Add</button></div>
-<div id="shiftsList"></div>
-</div>
-<div class="card">
-<div class="row-between"><h2>⭐ Other Sources</h2><button class="sm-btn" onclick="openModal('other')">+ Add</button></div>
-<div id="othersList"></div>
-</div>
-<div class="card">
-<h2>🗂️ Backup & Restore</h2>
-<button class="primary" onclick="backupData()">⬇️ Download Backup</button>
-<label class="secondary" style="display:block; text-align:center; margin-top:8px; padding:12px; border:1px solid var(--primary); border-radius:12px; color:var(--primary); cursor:pointer;">⬆️ Restore from File<input type="file" style="display:none" onchange="restoreFromFile(this.files[0])"></label>
-</div>
-</section>
+            <div id="shiftFields" style="display:none;">
+                <select id="recShift" onchange="fillShiftTemplate()">
+                    <option value="">-- Select Template (Optional) --</option>
+                </select>
+                <input type="text" id="recShiftName" placeholder="Shift Name (e.g. Night Shift, ER Cover)">
+                <div class="calc-toggle">
+                    <div class="calc-option active" onclick="selectShiftCalc('fixed', this)" id="calc-fixed">Fixed Amount</div>
+                    <div class="calc-option" onclick="selectShiftCalc('hourly', this)" id="calc-hourly">By Hours</div>
+                </div>
+                <div id="shiftFixedInput">
+                    <input type="number" id="recShiftFixed" placeholder="Total Shift Pay (e.g. 3000)" inputmode="decimal" oninput="calcPreview()">
+                </div>
+                <div id="shiftHourlyInput" style="display:none;">
+                    <div class="grid">
+                        <input type="number" id="recShiftHours" placeholder="Hours Worked" inputmode="decimal" oninput="calcPreview()">
+                        <input type="number" id="recShiftRate" placeholder="Hourly Rate" inputmode="decimal" oninput="calcPreview()">
+                    </div>
+                </div>
+                <div class="optional-section">
+                    <span class="optional-label">💰 Bonus (Optional)</span>
+                    <div class="grid">
+                        <input type="number" id="recBonusAmount" placeholder="Bonus Amount" inputmode="decimal" oninput="calcPreview()">
+                        <input type="text" id="recBonusReason" placeholder="Reason (e.g. weekend, holiday)">
+                    </div>
+                </div>
+            </div>
+
+            <div id="otherFields" style="display:none;">
+                <input type="text" id="recOtherName" placeholder="Source Name (e.g. Consultation, Gift)">
+                <input type="number" id="recOtherAmount" placeholder="Amount Earned" inputmode="decimal" oninput="calcPreview()">
+                <input type="text" id="recOtherDesc" placeholder="Description (optional)">
+            </div>
+
+            <input type="number" id="recFees" placeholder="Fees / Deductions" inputmode="decimal" oninput="calcPreview()">
+            <input type="text" id="recNotes" placeholder="Notes (optional)">
+
+            <div class="form-label" style="margin-top: 10px;">Payment Status</div>
+            <div class="status-toggle">
+                <div class="status-option pending active" onclick="selectStatus('pending')" id="status-pending">⏳ Pending</div>
+                <div class="status-option received" onclick="selectStatus('received')" id="status-received">✅ Received</div>
+            </div>
+
+            <div class="preview-pane">
+                <div class="preview-row">
+                    <span class="lbl">Your Earnings:</span>
+                    <span class="val net" id="netVal">$0.00</span>
+                </div>
+            </div>
+
+            <button class="primary" onclick="saveRecord()">💾 Save Record</button>
+            <button class="secondary" onclick="clearRecordForm()">Clear</button>
+        </div>
+    </section>
+
+    <!-- VERIFY -->
+    <section id="sec-verify" style="display:none">
+        <div class="card">
+            <h2>🔍 Pending Payments</h2>
+            <div id="verifyList"></div>
+        </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="sec-settings" style="display:none">
+        <div class="card">
+            <div class="row-between">
+                <h2>🏥 Clinics</h2>
+                <button class="sm-btn" onclick="openModal('clinic')">+ Add</button>
+            </div>
+            <div id="clinicsList"></div>
+        </div>
+        <div class="card">
+            <div class="row-between">
+                <h2>⏰ Shift Templates</h2>
+                <button class="sm-btn" onclick="openModal('shift')">+ Add</button>
+            </div>
+            <div id="shiftsList"></div>
+        </div>
+        <div class="card">
+            <div class="row-between">
+                <h2>⭐ Other Sources</h2>
+                <button class="sm-btn" onclick="openModal('other')">+ Add</button>
+            </div>
+            <div id="othersList"></div>
+        </div>
+        <div class="card">
+            <h2>🗂️ Backup & Export</h2>
+            <button class="primary" onclick="backupData()">⬇️ Download Backup (JSON)</button>
+            <div class="export-grid">
+                <button class="secondary" onclick="exportCSV()">📊 Export CSV</button>
+                <label class="secondary" style="display:block; text-align:center; padding:12px; border:1px solid var(--primary); border-radius:12px; color:var(--primary); cursor:pointer; margin:0;">
+                    ⬆️ Restore JSON
+                    <input type="file" style="display:none" accept=".json" onchange="restoreFromFile(this.files[0])">
+                </label>
+            </div>
+        </div>
+    </section>
 
 </div>
 
 <nav class="nav-bar">
-<button id="btn-home" class="active" onclick="showSec('home')"><span class="icon">📅</span>Calendar</button>
-<button id="btn-add" onclick="showSec('add')"><span class="icon">➕</span>Add</button>
-<button id="btn-verify" onclick="showSec('verify')"><span class="icon">✓</span>Verify</button>
-<button id="btn-settings" onclick="showSec('settings')"><span class="icon">⚙️</span>Setup</button>
+    <button id="btn-home" class="active" onclick="showSec('home')"><span class="icon">📅</span>Calendar</button>
+    <button id="btn-add" onclick="showSec('add')"><span class="icon">➕</span>Add</button>
+    <button id="btn-verify" onclick="showSec('verify')"><span class="icon">✓</span>Verify</button>
+    <button id="btn-settings" onclick="showSec('settings')"><span class="icon">⚙️</span>Setup</button>
 </nav>
 
 <script>
@@ -406,831 +450,987 @@ let currentStatus = 'pending';
 let tempRule = 'percent';
 let tempPayType = 'daily';
 let shiftCalcMethod = 'fixed';
+let currentViewingSource = null;
 
 function loadData() {
-try {
-const raw = localStorage.getItem(STORAGE_KEY);
-const parsed = raw ? JSON.parse(raw) : null;
-if (parsed && parsed.clinics) return parsed;
-} catch(e) {}
-return { clinics: [], shifts: [], others: [], records: [], settings: { reminderDay: 28 } };
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : null;
+        if (parsed && parsed.clinics) {
+            if (!parsed.others) parsed.others = [];
+            if (!parsed.settings) parsed.settings = { reminderDay: 28 };
+            return parsed;
+        }
+    } catch(e) { console.error('Load error:', e); }
+    return { 
+        clinics: [], 
+        shifts: [],
+        others: [],
+        records: [], 
+        settings: { reminderDay: 28 } 
+    };
 }
-function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
+function saveData() { 
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); 
+    } catch(e) {
+        alert('Failed to save data. Storage might be full.');
+    }
+}
 
 function renderCalendar() {
-const year = currentMonth.getFullYear();
-const month = currentMonth.getMonth();
-const firstDay = new Date(year, month, 1).getDay();
-const daysInMonth = new Date(year, month + 1, 0).getDate();
-document.getElementById('calendarTitle').textContent = new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-const grid = document.getElementById('calendarGrid');
-grid.innerHTML = '';
-const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-dayNames.forEach(d => { grid.innerHTML += `<div class="calendar-day-header">${d}</div>`; });
-for (let i = 0; i < firstDay; i++) { grid.innerHTML += `<div class="calendar-day other-month"></div>`; }
-const today = new Date().toISOString().slice(0, 10);
-const monthStr = String(year) + '-' + String(month + 1).padStart(2, '0');
-for (let day = 1; day <= daysInMonth; day++) {
-const dateStr = monthStr + '-' + String(day).padStart(2, '0');
-const dayRecords = data.records.filter(r => r.date === dateStr);
-const hasData = dayRecords.length > 0;
-const isToday = dateStr === today;
-const isSelected = dateStr === selectedDate;
-let indicators = '';
-if (hasData) {
-const types = new Set(dayRecords.map(r => r.type));
-indicators = '<div class="day-indicators">';
-if (types.has('clinic')) indicators += '<div class="day-dot"></div>';
-if (types.has('shift')) indicators += '<div class="day-dot shift"></div>';
-if (types.has('other')) indicators += '<div class="day-dot other"></div>';
-indicators += '</div>';
-}
-const cell = document.createElement('div');
-cell.className = 'calendar-day' + (hasData ? ' has-data' : '') + (isToday ? ' today' : '') + (isSelected ? ' selected' : '');
-cell.innerHTML = `<span>${day}</span>${indicators}`;
-cell.onclick = () => selectDate(dateStr);
-grid.appendChild(cell);
-}
-renderDayDetail();
-renderMonthSources();
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    document.getElementById('calendarTitle').textContent = 
+        new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    
+    const grid = document.getElementById('calendarGrid');
+    grid.innerHTML = '';
+    
+    const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+    dayNames.forEach(d => {
+        const header = document.createElement('div');
+        header.className = 'calendar-day-header';
+        header.textContent = d;
+        grid.appendChild(header);
+    });
+    
+    for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'calendar-day other-month';
+        grid.appendChild(empty);
+    }
+    
+    const today = new Date().toISOString().slice(0, 10);
+    const monthStr = String(year) + '-' + String(month + 1).padStart(2, '0');
+    
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = monthStr + '-' + String(day).padStart(2, '0');
+        const dayRecords = data.records.filter(r => r.date === dateStr);
+        const hasData = dayRecords.length > 0;
+        const isToday = dateStr === today;
+        const isSelected = dateStr === selectedDate;
+        
+        let indicators = '';
+        if (hasData) {
+            const types = new Set(dayRecords.map(r => r.type));
+            const hasPending = dayRecords.some(r => r.status !== 'received');
+            indicators = '<div class="day-indicators">';
+            if (types.has('clinic')) indicators += '<div class="day-dot"></div>';
+            if (types.has('shift')) indicators += '<div class="day-dot shift"></div>';
+            if (types.has('other')) indicators += '<div class="day-dot other"></div>';
+            if (hasPending) indicators += '<div class="day-dot" style="background:var(--warning)"></div>';
+            indicators += '</div>';
+        }
+        
+        const cell = document.createElement('div');
+        cell.className = 'calendar-day' + 
+            (hasData ? ' has-data' : '') + 
+            (isToday ? ' today' : '') + 
+            (isSelected ? ' selected' : '');
+        cell.innerHTML = `<span>${day}</span>${indicators}`;
+        cell.onclick = () => selectDate(dateStr);
+        grid.appendChild(cell);
+    }
+    
+    renderDayDetail();
+    renderMonthSources();
 }
 
 function changeMonth(delta) {
-currentMonth.setMonth(currentMonth.getMonth() + delta);
-renderCalendar();
+    currentMonth.setMonth(currentMonth.getMonth() + delta);
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const currentDay = parseInt(selectedDate.split('-')[2]);
+    const newDay = Math.min(currentDay, daysInMonth);
+    selectedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(newDay).padStart(2, '0')}`;
+    renderCalendar();
 }
 
 function selectDate(dateStr) {
-selectedDate = dateStr;
-renderCalendar();
+    selectedDate = dateStr;
+    renderCalendar();
+    setTimeout(() => {
+        const detail = document.getElementById('dayDetail');
+        if (detail && window.innerWidth < 600) {
+            detail.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, 100);
 }
 
 function renderDayDetail() {
-const container = document.getElementById('dayDetail');
-const content = document.getElementById('detailContent');
-const records = data.records.filter(r => r.date === selectedDate);
-document.getElementById('detailDate').textContent = new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-if (records.length === 0) {
-content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div>No earnings recorded.<br>Tap + Add to create one.</div>';
-container.style.display = 'block';
-return;
-}
-content.innerHTML = '';
-let dayTotal = 0;
-records.forEach((r, idx) => {
-const net = calcNet(r);
-dayTotal += net;
-let title, subtitle, cssClass;
-if (r.type === 'clinic') {
-const clinic = data.clinics[r.sourceIndex];
-title = clinic ? clinic.name : 'Unknown Clinic';
-subtitle = `Revenue: $${r.earnings} → Your share: $${r.expected?.toFixed(0) || '?'}`;
-if (r.patients || r.echos) {
-const parts = [];
-if (r.patients) parts.push(`${r.patients} patients`);
-if (r.echos) parts.push(`${r.echos} echos`);
-if (r.hours) parts.push(`${r.hours}h`);
-subtitle += `<br><small style="color: var(--primary);">${parts.join(' • ')}</small>`;
-}
-cssClass = '';
-} else if (r.type === 'shift') {
-const shift = data.shifts[r.sourceIndex];
-title = r.shiftName || (shift ? shift.name : 'Shift');
-if (r.calcMethod === 'hourly') {
-subtitle = `${r.hours || '?'} hrs × $${r.rate}/hr`;
-} else {
-subtitle = `Fixed: $${r.fixedAmount || '?'}`;
-}
-if (r.bonus) subtitle += ` + $${r.bonus} bonus`;
-if (r.patients || r.echos) {
-const parts = [];
-if (r.patients) parts.push(`${r.patients} patients`);
-if (r.echos) parts.push(`${r.echos} echos`);
-subtitle += `<br><small style="color: var(--info);">${parts.join(' • ')}</small>`;
-}
-cssClass = 'shift';
-} else {
-title = r.otherName || 'Other Income';
-subtitle = r.otherDesc || (r.notes || '');
-cssClass = 'other';
-}
-const item = document.createElement('div');
-item.className = 'income-item ' + cssClass;
-item.innerHTML = `<div class="income-item-info"><div class="income-item-title">${title}</div><div class="income-item-sub">${subtitle}</div></div><div style="text-align:right"><div class="income-item-amount">$${net.toFixed(0)}</div><span class="badge ${r.status || 'pending'}">${r.status || 'pending'}</span></div>`;
-item.onclick = () => editRecord(data.records.indexOf(r));
-content.appendChild(item);
-});
-const totalDiv = document.createElement('div');
-totalDiv.style.cssText = 'text-align:right; margin-top:12px; padding-top:12px; border-top:2px solid #f0f0f0;';
-totalDiv.innerHTML = `<strong>Day Total: $${dayTotal.toFixed(2)}</strong>`;
-content.appendChild(totalDiv);
-container.style.display = 'block';
+    const container = document.getElementById('dayDetail');
+    const content = document.getElementById('detailContent');
+    const records = data.records.filter(r => r.date === selectedDate);
+    
+    document.getElementById('detailDate').textContent = new Date(selectedDate).toLocaleDateString('en-US', { 
+        weekday: 'long', month: 'long', day: 'numeric' 
+    });
+    
+    if (records.length === 0) {
+        content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div>No earnings recorded.<br>Tap + Add to create one.</div>';
+        container.style.display = 'block';
+        return;
+    }
+    
+    content.innerHTML = '';
+    let dayTotal = 0;
+    
+    records.forEach((r, idx) => {
+        const net = calcNet(r);
+        dayTotal += net;
+        
+        let title, subtitle, cssClass;
+        if (r.type === 'clinic') {
+            const clinic = data.clinics[r.sourceIndex];
+            title = clinic ? clinic.name : 'Unknown Clinic';
+            subtitle = `Revenue: $${r.earnings} → Your share: $${r.expected?.toFixed(0) || '?'}`;
+            if (r.patients) subtitle += ` • ${r.patients} patients`;
+            if (r.echos) subtitle += ` • ${r.echos} echos`;
+            cssClass = '';
+        } else if (r.type === 'shift') {
+            const shift = r.sourceIndex >= 0 ? data.shifts[r.sourceIndex] : null;
+            title = r.shiftName || (shift ? shift.name : 'Shift');
+            if (r.calcMethod === 'hourly') {
+                subtitle = `${r.hours || '?'} hrs × $${r.rate}/hr`;
+            } else {
+                subtitle = `Fixed: $${r.fixedAmount || '?'}`;
+            }
+            if (r.bonus) subtitle += ` + $${r.bonus} bonus`;
+            if (r.hours && r.calcMethod !== 'hourly') subtitle += ` • ${r.hours} hrs`;
+            cssClass = 'shift';
+        } else {
+            title = r.otherName || 'Other Income';
+            subtitle = r.otherDesc || (r.notes || '');
+            cssClass = 'other';
+        }
+        
+        const item = document.createElement('div');
+        item.className = 'income-item ' + cssClass;
+        item.innerHTML = `
+            <div class="income-item-info">
+                <div class="income-item-title">${title}</div>
+                <div class="income-item-sub">${subtitle}</div>
+            </div>
+            <div style="text-align:right">
+                <div class="income-item-amount">$${net.toFixed(0)}</div>
+                <span class="badge ${r.status || 'pending'}">${r.status || 'pending'}</span>
+            </div>
+        `;
+        item.onclick = () => editRecord(data.records.indexOf(r));
+        content.appendChild(item);
+    });
+    
+    const totalDiv = document.createElement('div');
+    totalDiv.style.cssText = 'text-align:right; margin-top:12px; padding-top:12px; border-top:2px solid #f0f0f0;';
+    totalDiv.innerHTML = `<strong>Day Total: $${dayTotal.toFixed(2)}</strong>`;
+    content.appendChild(totalDiv);
+    
+    container.style.display = 'block';
 }
 
 function renderMonthSources() {
-const container = document.getElementById('monthSources');
-const monthStr = selectedDate.slice(0, 7);
-const records = data.records.filter(r => r.date.startsWith(monthStr));
-const bySource = {};
-records.forEach(r => {
-const net = calcNet(r);
-let key;
-if (r.type === 'clinic') {
-const c = data.clinics[r.sourceIndex];
-key = c ? c.name : 'Unknown Clinic';
-} else if (r.type === 'shift') {
-key = r.shiftName || 'Shift Work';
-} else {
-key = r.otherName || 'Other Income';
+    const container = document.getElementById('monthSources');
+    const monthStr = selectedDate.slice(0, 7);
+    const records = data.records.filter(r => r.date.startsWith(monthStr));
+    
+    if (records.length === 0) {
+        container.innerHTML = '<p class="small" style="text-align:center; color:#999; padding:20px;">No earnings this month yet.</p>';
+        return;
+    }
+    
+    const bySource = {};
+    records.forEach(r => {
+        const net = calcNet(r);
+        let key;
+        if (r.type === 'clinic') {
+            const c = data.clinics[r.sourceIndex];
+            key = c ? c.name : 'Unknown Clinic';
+        } else if (r.type === 'shift') {
+            key = r.shiftName || 'Shift Work';
+        } else {
+            key = r.otherName || 'Other Income';
+        }
+        
+        if (!bySource[key]) bySource[key] = { total: 0, pending: 0, count: 0, type: r.type, indices: [] };
+        bySource[key].total += net;
+        if (r.status !== 'received') bySource[key].pending += net;
+        bySource[key].count++;
+        bySource[key].indices.push(data.records.indexOf(r));
+    });
+    
+    if (Object.keys(bySource).length === 0) {
+        container.innerHTML = '<p class="small" style="text-align:center; color:#999; padding:20px;">No earnings this month yet.</p>';
+        return;
+    }
+    
+    container.innerHTML = '';
+    Object.entries(bySource).forEach(([name, info]) => {
+        const icon = info.type === 'clinic' ? '🏥' : info.type === 'shift' ? '⏰' : '⭐';
+        
+        let dots = '';
+        const sourceRecords = records.filter(r => {
+            if (r.type === 'clinic') {
+                const c = data.clinics[r.sourceIndex];
+                return c && c.name === name;
+            } else if (r.type === 'shift') {
+                return (r.shiftName || 'Shift Work') === name;
+            } else {
+                return (r.otherName || 'Other Income') === name;
+            }
+        }).sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        const dotHtml = sourceRecords.map(r => {
+            const pending = r.status !== 'received';
+            return `<div class="dot ${pending ? 'pending' : ''}" title="${r.date}: $${calcNet(r).toFixed(0)}"></div>`;
+        }).join('');
+        
+        const row = document.createElement('div');
+        row.className = 'summary-row';
+        row.style.cursor = 'pointer';
+        row.innerHTML = `
+            <div style="flex:1">
+                <div>${icon} ${name} <span class="small">(${info.count} days)</span></div>
+                <div class="dot-chart">${dotHtml}</div>
+            </div>
+            <div style="text-align:right">
+                <strong>$${info.total.toFixed(0)}</strong>
+                ${info.pending > 0 ? `<div class="small" style="color:var(--warning)">$${info.pending} pending</div>` : ''}
+            </div>
+        `;
+        row.onclick = () => openSourceDetail(name, info.type);
+        container.appendChild(row);
+    });
 }
-if (!bySource[key]) bySource[key] = { total: 0, pending: 0, count: 0, type: r.type, patients: 0, echos: 0, hours: 0 };
-bySource[key].total += net;
-if (r.status !== 'received') bySource[key].pending += net;
-bySource[key].count++;
-if (r.patients) bySource[key].patients += r.patients;
-if (r.echos) bySource[key].echos += r.echos;
-if (r.hours) bySource[key].hours += r.hours;
-});
-if (Object.keys(bySource).length === 0) {
-container.innerHTML = '<p class="small" style="text-align:center; color:#999; padding:20px;">No earnings this month yet.</p>';
-return;
+
+function openSourceDetail(name, type) {
+    currentViewingSource = { name, type };
+    document.getElementById('sourceDetailTitle').textContent = 
+        (type === 'clinic' ? '🏥 ' : type === 'shift' ? '⏰ ' : '⭐ ') + name;
+    
+    const filter = document.getElementById('sourceMonthFilter');
+    filter.innerHTML = '<option value="all">All Time</option>';
+    const months = new Set();
+    data.records.forEach(r => {
+        if (matchesSource(r, name, type)) {
+            months.add(r.date.slice(0, 7));
+        }
+    });
+    Array.from(months).sort().reverse().forEach(m => {
+        const [y, mo] = m.split('-');
+        const date = new Date(y, mo - 1);
+        const label = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        filter.innerHTML += `<option value="${m}">${label}</option>`;
+    });
+    
+    renderSourceDays();
+    document.getElementById('sourceDetailModal').classList.add('active');
 }
-container.innerHTML = '';
-Object.entries(bySource).forEach(([name, info]) => {
-const icon = info.type === 'clinic' ? '🏥' : info.type === 'shift' ? '⏰' : '⭐';
-let productivity = '';
-if (info.patients || info.echos) {
-const parts = [];
-if (info.patients) parts.push(`${info.patients} pat`);
-if (info.echos) parts.push(`${info.echos} echo`);
-if (info.hours) parts.push(`${info.hours}h`);
-productivity = `<span style="color: var(--primary); font-size: 11px;">${parts.join(' • ')}</span>`;
+
+function matchesSource(record, name, type) {
+    if (record.type !== type) return false;
+    if (type === 'clinic') {
+        const c = data.clinics[record.sourceIndex];
+        return c && c.name === name;
+    } else if (type === 'shift') {
+        return (record.shiftName || 'Shift Work') === name;
+    } else {
+        return (record.otherName || 'Other Income') === name;
+    }
 }
-container.innerHTML += `<div class="summary-row"><span>${icon} ${name} <span class="small">(${info.count})</span><br>${productivity}</span><div style="text-align:right"><strong>$${info.total.toFixed(0)}</strong>${info.pending > 0 ? `<div class="small" style="color:var(--warning)">$${info.pending} pending</div>` : ''}</div></div>`;
-});
+
+function renderSourceDays() {
+    const filterMonth = document.getElementById('sourceMonthFilter').value;
+    const { name, type } = currentViewingSource;
+    
+    let records = data.records.filter(r => matchesSource(r, name, type));
+    if (filterMonth !== 'all') {
+        records = records.filter(r => r.date.startsWith(filterMonth));
+    }
+    records.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    const totalDays = records.length;
+    const totalEarnings = records.reduce((sum, r) => sum + calcNet(r), 0);
+    const pending = records.filter(r => r.status !== 'received').reduce((sum, r) => sum + calcNet(r), 0);
+    
+    document.getElementById('statTotalDays').textContent = totalDays;
+    document.getElementById('statTotalEarnings').textContent = '$' + Math.round(totalEarnings).toLocaleString();
+    document.getElementById('statPending').textContent = '$' + Math.round(pending).toLocaleString();
+    
+    const list = document.getElementById('sourceDaysList');
+    if (records.length === 0) {
+        list.innerHTML = '<div class="empty-state">No records found for this period.</div>';
+        return;
+    }
+    
+    list.innerHTML = records.map(r => {
+        const net = calcNet(r);
+        const date = new Date(r.date);
+        const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+        
+        let details = '';
+        if (r.type === 'clinic') {
+            details = `Revenue: $${r.earnings}`;
+            if (r.patients) details += ` • ${r.patients} pts`;
+            if (r.echos) details += ` • ${r.echos} echos`;
+            if (r.hours) details += ` • ${r.hours} hrs`;
+        } else if (r.type === 'shift') {
+            if (r.calcMethod === 'hourly') {
+                details = `${r.hours}h × $${r.rate}`;
+            } else {
+                details = `Fixed $${r.fixedAmount}`;
+            }
+            if (r.bonus) details += ` +$${r.bonus} bonus`;
+            if (r.hours && r.calcMethod === 'fixed') details += ` (${r.hours}h)`;
+        } else {
+            details = r.otherDesc || r.notes || '';
+        }
+        
+        return `
+            <div class="work-day-item" onclick="editFromSourceDetail('${r.date}', ${data.records.indexOf(r)})">
+                <div>
+                    <div class="work-day-date">${dateStr} <span style="color:#888;font-size:12px">(${dayName})</span></div>
+                    <div style="font-size:12px;color:#666;margin-top:2px">${details}</div>
+                </div>
+                <div style="text-align:right">
+                    <div class="work-day-amount">$${net.toFixed(0)}</div>
+                    <span class="badge ${r.status || 'pending'}" style="font-size:10px">${r.status || 'pending'}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function editFromSourceDetail(date, idx) {
+    closeSourceDetail();
+    selectedDate = date;
+    editRecord(idx);
+}
+
+function closeSourceDetail() {
+    document.getElementById('sourceDetailModal').classList.remove('active');
+    currentViewingSource = null;
 }
 
 function selectEntryType(type, el) {
-document.getElementById('entryType').value = type;
-document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
-el.classList.add('active');
-document.getElementById('clinicFields').style.display = type === 'clinic' ? 'block' : 'none';
-document.getElementById('shiftFields').style.display = type === 'shift' ? 'block' : 'none';
-document.getElementById('otherFields').style.display = type === 'other' ? 'block' : 'none';
-if (type === 'shift') {
-selectShiftCalc('fixed', document.getElementById('calc-fixed'));
-}
-refreshSelectors();
-calcPreview();
-}
-
-function toggleOptionalFields(type) {
-const checkbox = document.getElementById(type === 'clinic' ? 'showClinicOptional' : 'showShiftOptional');
-const fields = document.getElementById(type === 'clinic' ? 'clinicOptionalFields' : 'shiftOptionalFields');
-fields.style.display = checkbox.checked ? 'grid' : 'none';
-calcPreview();
+    document.getElementById('entryType').value = type;
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    
+    document.getElementById('clinicFields').style.display = type === 'clinic' ? 'block' : 'none';
+    document.getElementById('shiftFields').style.display = type === 'shift' ? 'block' : 'none';
+    document.getElementById('otherFields').style.display = type === 'other' ? 'block' : 'none';
+    
+    if (type === 'shift') {
+        selectShiftCalc('fixed', document.getElementById('calc-fixed'));
+    }
+    
+    refreshSelectors();
+    calcPreview();
 }
 
 function selectShiftCalc(method, el) {
-shiftCalcMethod = method;
-document.querySelectorAll('.calc-option').forEach(o => o.classList.remove('active'));
-el.classList.add('active');
-document.getElementById('shiftFixedInput').style.display = method === 'fixed' ? 'block' : 'none';
-document.getElementById('shiftHourlyInput').style.display = method === 'hourly' ? 'grid' : 'none';
-calcPreview();
+    shiftCalcMethod = method;
+    document.querySelectorAll('.calc-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    
+    document.getElementById('shiftFixedInput').style.display = method === 'fixed' ? 'block' : 'none';
+    document.getElementById('shiftHourlyInput').style.display = method === 'hourly' ? 'grid' : 'none';
+    
+    calcPreview();
 }
 
 function selectStatus(status) {
-currentStatus = status;
-document.getElementById('status-pending').classList.toggle('active', status === 'pending');
-document.getElementById('status-received').classList.toggle('active', status === 'received');
+    currentStatus = status;
+    document.getElementById('status-pending').classList.toggle('active', status === 'pending');
+    document.getElementById('status-received').classList.toggle('active', status === 'received');
 }
 
 function refreshSelectors() {
-const cSel = document.getElementById('recClinic');
-cSel.innerHTML = '<option value="">-- Select Clinic --</option>';
-data.clinics.forEach((c, i) => { cSel.innerHTML += `<option value="${i}">${c.name}</option>`; });
-const sSel = document.getElementById('recShift');
-sSel.innerHTML = '<option value="">-- Select Template (Optional) --</option>';
-data.shifts.forEach((s, i) => { sSel.innerHTML += `<option value="${i}">${s.name}</option>`; });
+    const cSel = document.getElementById('recClinic');
+    cSel.innerHTML = '<option value="">-- Select Clinic --</option>';
+    data.clinics.forEach((c, i) => {
+        cSel.innerHTML += `<option value="${i}">${c.name}</option>`;
+    });
+    
+    const sSel = document.getElementById('recShift');
+    sSel.innerHTML = '<option value="">-- Select Template (Optional) --</option>';
+    data.shifts.forEach((s, i) => {
+        sSel.innerHTML += `<option value="${i}">${s.name}</option>`;
+    });
 }
 
 function fillShiftTemplate() {
-const idx = document.getElementById('recShift').value;
-if (idx === '') return;
-const shift = data.shifts[idx];
-document.getElementById('recShiftName').value = shift.name;
-if (shift.amount) {
-document.getElementById('recShiftFixed').value = shift.amount;
-selectShiftCalc('fixed', document.getElementById('calc-fixed'));
-}
-calcPreview();
+    const idx = document.getElementById('recShift').value;
+    if (idx === '') return;
+    const shift = data.shifts[idx];
+    if (!shift) return;
+    document.getElementById('recShiftName').value = shift.name;
+    if (shift.amount) {
+        document.getElementById('recShiftFixed').value = shift.amount;
+        selectShiftCalc('fixed', document.getElementById('calc-fixed'));
+    }
+    calcPreview();
 }
 
 function calcPreview() {
-const type = document.getElementById('entryType').value;
-let net = 0;
-let productivityText = '';
-if (type === 'clinic') {
-const clinicIdx = document.getElementById('recClinic').value;
-const earnings = Number(document.getElementById('recEarnings').value) || 0;
-const fees = Number(document.getElementById('recFees').value) || 0;
-if (clinicIdx !== '') {
-const clinic = data.clinics[clinicIdx];
-net = calculateIncome(earnings, clinic) - fees;
-}
-const patients = document.getElementById('recPatients').value;
-const echos = document.getElementById('recEchos').value;
-const hours = document.getElementById('recClinicHours').value;
-const parts = [];
-if (patients) parts.push(`${patients} patients`);
-if (echos) parts.push(`${echos} echos`);
-if (hours) parts.push(`${hours} hours`);
-if (parts.length > 0) productivityText = parts.join(' • ');
-} else if (type === 'shift') {
-const bonus = Number(document.getElementById('recBonusAmount').value) || 0;
-const fees = Number(document.getElementById('recFees').value) || 0;
-if (shiftCalcMethod === 'fixed') {
-const fixed = Number(document.getElementById('recShiftFixed').value) || 0;
-net = fixed + bonus - fees;
-} else {
-const hours = Number(document.getElementById('recShiftHours').value) || 0;
-const rate = Number(document.getElementById('recShiftRate').value) || 0;
-net = (hours * rate) + bonus - fees;
-}
-const patients = document.getElementById('recShiftPatients').value;
-const echos = document.getElementById('recShiftEchos').value;
-const parts = [];
-if (patients) parts.push(`${patients} patients`);
-if (echos) parts.push(`${echos} echos`);
-if (parts.length > 0) productivityText = parts.join(' • ');
-} else {
-net = Number(document.getElementById('recOtherAmount').value) || 0;
-net -= Number(document.getElementById('recFees').value) || 0;
-}
-document.getElementById('netVal').textContent = '$' + net.toFixed(2);
-const previewEl = document.getElementById('productivityPreview');
-const detailsEl = document.getElementById('productivityDetails');
-if (productivityText) {
-previewEl.style.display = 'flex';
-detailsEl.textContent = productivityText;
-} else {
-previewEl.style.display = 'none';
-}
+    const type = document.getElementById('entryType').value;
+    let net = 0;
+    
+    if (type === 'clinic') {
+        const clinicIdx = document.getElementById('recClinic').value;
+        const earnings = Number(document.getElementById('recEarnings').value) || 0;
+        const fees = Number(document.getElementById('recFees').value) || 0;
+        
+        if (clinicIdx !== '') {
+            const clinic = data.clinics[clinicIdx];
+            net = calculateIncome(earnings, clinic) - fees;
+        }
+    } else if (type === 'shift') {
+        const bonus = Number(document.getElementById('recBonusAmount').value) || 0;
+        const fees = Number(document.getElementById('recFees').value) || 0;
+        
+        if (shiftCalcMethod === 'fixed') {
+            const fixed = Number(document.getElementById('recShiftFixed').value) || 0;
+            net = fixed + bonus - fees;
+        } else {
+            const hours = Number(document.getElementById('recShiftHours').value) || 0;
+            const rate = Number(document.getElementById('recShiftRate').value) || 0;
+            net = (hours * rate) + bonus - fees;
+        }
+    } else {
+        net = Number(document.getElementById('recOtherAmount').value) || 0;
+        net -= Number(document.getElementById('recFees').value) || 0;
+    }
+    
+    document.getElementById('netVal').textContent = '$' + net.toFixed(2);
 }
 
 function saveRecord() {
-const type = document.getElementById('entryType').value;
-const date = document.getElementById('recDate').value;
-if (!date) return alert('Please select a date');
-const record = { date, type, status: currentStatus, fees: Number(document.getElementById('recFees').value) || 0, notes: document.getElementById('recNotes').value };
-if (type === 'clinic') {
-const idx = document.getElementById('recClinic').value;
-if (idx === '') return alert('Please select a clinic');
-record.sourceIndex = Number(idx);
-record.earnings = Number(document.getElementById('recEarnings').value) || 0;
-record.expected = calculateIncome(record.earnings, data.clinics[idx]);
-record.patients = Number(document.getElementById('recPatients').value) || 0;
-record.echos = Number(document.getElementById('recEchos').value) || 0;
-record.hours = Number(document.getElementById('recClinicHours').value) || 0;
-} else if (type === 'shift') {
-const idx = document.getElementById('recShift').value;
-record.sourceIndex = idx !== '' ? Number(idx) : -1;
-record.shiftName = document.getElementById('recShiftName').value;
-record.calcMethod = shiftCalcMethod;
-record.bonus = Number(document.getElementById('recBonusAmount').value) || 0;
-record.bonusReason = document.getElementById('recBonusReason').value;
-if (shiftCalcMethod === 'fixed') {
-record.fixedAmount = Number(document.getElementById('recShiftFixed').value) || 0;
-} else {
-record.hours = Number(document.getElementById('recShiftHours').value) || 0;
-record.rate = Number(document.getElementById('recShiftRate').value) || 0;
-}
-record.patients = Number(document.getElementById('recShiftPatients').value) || 0;
-record.echos = Number(document.getElementById('recShiftEchos').value) || 0;
-} else {
-record.otherName = document.getElementById('recOtherName').value || 'Other Income';
-record.amount = Number(document.getElementById('recOtherAmount').value) || 0;
-record.otherDesc = document.getElementById('recOtherDesc').value;
-}
-const editIdx = document.getElementById('editIdx').value;
-if (editIdx !== '') {
-data.records[parseInt(editIdx)] = record;
-} else {
-data.records.push(record);
-}
-saveData();
-clearRecordForm();
-showSec('home');
-renderCalendar();
+    const type = document.getElementById('entryType').value;
+    const date = document.getElementById('recDate').value;
+    if (!date) return alert('Please select a date');
+    
+    const record = {
+        date,
+        type,
+        status: currentStatus,
+        fees: Number(document.getElementById('recFees').value) || 0,
+        notes: document.getElementById('recNotes').value,
+        patients: Number(document.getElementById('recPatients').value) || null,
+        hours: Number(document.getElementById('recHours').value) || null,
+        echos: Number(document.getElementById('recEchos').value) || null
+    };
+    
+    if (type === 'clinic') {
+        const idx = document.getElementById('recClinic').value;
+        if (idx === '') return alert('Please select a clinic');
+        record.sourceIndex = Number(idx);
+        record.earnings = Number(document.getElementById('recEarnings').value) || 0;
+        record.expected = calculateIncome(record.earnings, data.clinics[idx]);
+    } else if (type === 'shift') {
+        const idx = document.getElementById('recShift').value;
+        record.sourceIndex = idx !== '' ? Number(idx) : -1;
+        record.shiftName = document.getElementById('recShiftName').value;
+        record.calcMethod = shiftCalcMethod;
+        record.bonus = Number(document.getElementById('recBonusAmount').value) || 0;
+        record.bonusReason = document.getElementById('recBonusReason').value;
+        
+        if (shiftCalcMethod === 'fixed') {
+            record.fixedAmount = Number(document.getElementById('recShiftFixed').value) || 0;
+        } else {
+            record.hours = Number(document.getElementById('recShiftHours').value) || 0;
+            record.rate = Number(document.getElementById('recShiftRate').value) || 0;
+        }
+    } else {
+        record.otherName = document.getElementById('recOtherName').value || 'Other Income';
+        record.amount = Number(document.getElementById('recOtherAmount').value) || 0;
+        record.otherDesc = document.getElementById('recOtherDesc').value;
+    }
+    
+    if (!record.patients) delete record.patients;
+    if (!record.hours) delete record.hours;
+    if (!record.echos) delete record.echos;
+    
+    const editIdx = document.getElementById('editIdx').value;
+    if (editIdx !== '') {
+        data.records[parseInt(editIdx)] = record;
+    } else {
+        data.records.push(record);
+    }
+    
+    saveData();
+    clearRecordForm();
+    showSec('home');
+    renderCalendar();
 }
 
 function clearRecordForm() {
-document.getElementById('editIdx').value = '';
-document.getElementById('recDate').value = new Date().toISOString().slice(0, 10);
-document.getElementById('recClinic').value = '';
-document.getElementById('recEarnings').value = '';
-document.getElementById('recPatients').value = '';
-document.getElementById('recEchos').value = '';
-document.getElementById('recClinicHours').value = '';
-document.getElementById('showClinicOptional').checked = false;
-document.getElementById('clinicOptionalFields').style.display = 'none';
-document.getElementById('recShift').value = '';
-document.getElementById('recShiftName').value = '';
-document.getElementById('recShiftFixed').value = '';
-document.getElementById('recShiftHours').value = '';
-document.getElementById('recShiftRate').value = '';
-document.getElementById('recShiftPatients').value = '';
-document.getElementById('recShiftEchos').value = '';
-document.getElementById('showShiftOptional').checked = false;
-document.getElementById('shiftOptionalFields').style.display = 'none';
-document.getElementById('recBonusAmount').value = '';
-document.getElementById('recBonusReason').value = '';
-document.getElementById('recOtherName').value = '';
-document.getElementById('recOtherAmount').value = '';
-document.getElementById('recOtherDesc').value = '';
-document.getElementById('recFees').value = '';
-document.getElementById('recNotes').value = '';
-selectStatus('pending');
-selectShiftCalc('fixed', document.getElementById('calc-fixed'));
-calcPreview();
+    document.getElementById('editIdx').value = '';
+    document.getElementById('recDate').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('recPatients').value = '';
+    document.getElementById('recHours').value = '';
+    document.getElementById('recEchos').value = '';
+    document.getElementById('recClinic').value = '';
+    document.getElementById('recEarnings').value = '';
+    document.getElementById('recShift').value = '';
+    document.getElementById('recShiftName').value = '';
+    document.getElementById('recShiftFixed').value = '';
+    document.getElementById('recShiftHours').value = '';
+    document.getElementById('recShiftRate').value = '';
+    document.getElementById('recBonusAmount').value = '';
+    document.getElementById('recBonusReason').value = '';
+    document.getElementById('recOtherName').value = '';
+    document.getElementById('recOtherAmount').value = '';
+    document.getElementById('recOtherDesc').value = '';
+    document.getElementById('recFees').value = '';
+    document.getElementById('recNotes').value = '';
+    selectStatus('pending');
+    selectShiftCalc('fixed', document.getElementById('calc-fixed'));
+    calcPreview();
 }
 
 function editRecord(idx) {
-const r = data.records[idx];
-document.getElementById('editIdx').value = idx;
-document.getElementById('recDate').value = r.date;
-selectStatus(r.status || 'pending');
-const typeBtn = r.type === 'clinic' ? 0 : r.type === 'shift' ? 1 : 2;
-document.querySelectorAll('.type-btn')[typeBtn].click();
-setTimeout(() => {
-if (r.type === 'clinic') {
-document.getElementById('recClinic').value = r.sourceIndex;
-document.getElementById('recEarnings').value = r.earnings;
-if (r.patients || r.echos || r.hours) {
-document.getElementById('showClinicOptional').checked = true;
-document.getElementById('clinicOptionalFields').style.display = 'grid';
-document.getElementById('recPatients').value = r.patients || '';
-document.getElementById('recEchos').value = r.echos || '';
-document.getElementById('recClinicHours').value = r.hours || '';
-}
-} else if (r.type === 'shift') {
-document.getElementById('recShift').value = r.sourceIndex >= 0 ? r.sourceIndex : '';
-document.getElementById('recShiftName').value = r.shiftName || '';
-document.getElementById('recBonusAmount').value = r.bonus || '';
-        } else {
-            sList.innerHTML = data.shifts.map((s, i) => `
-                <div class="job-item">
-                    <div class="job-info">
-                        <strong>${s.name}</strong>
-                        <span>${s.amount > 0 ? '$' + s.amount + ' fixed' : 'Variable'}</span>
-                    </div>
-                    <button class="danger" onclick="deleteShift(${i})">🗑</button>
-                </div>
-            `).join('');
-        }
-        
-        const oList = document.getElementById('othersList');
-        if (data.others.length === 0) {
-            oList.innerHTML = '<p class="small" style="color:#999;">No other sources added.</p>';
-        } else {
-            oList.innerHTML = data.others.map((o, i) => `
-                <div class="job-item">
-                    <div class="job-info">
-                        <strong>${o.name}</strong>
-                        <span>${o.amount > 0 ? '$' + o.amount : 'Variable amount'}</span>
-                    </div>
-                    <button class="danger" onclick="deleteOther(${i})">🗑</button>
-                </div>
-            `).join('');
-        }
+    if (idx < 0 || idx >= data.records.length) {
+        console.error('Invalid record index:', idx);
+        return;
     }
-
-    function deleteClinic(idx) { 
-        if (confirm('Delete this clinic?')) {
-            data.clinics.splice(idx, 1); 
-            saveData(); 
-            refreshSettings(); 
-        }
-    }
-
-    function deleteShift(idx) { 
-        if (confirm('Delete this shift template?')) {
-            data.shifts.splice(idx, 1); 
-            saveData(); 
-            refreshSettings(); 
-        }
-    }
-
-    function deleteOther(idx) { 
-        if (confirm('Delete this source?')) {
-            data.others.splice(idx, 1); 
-            saveData(); 
-            refreshSettings(); 
-        }
-    }
-
-    function calculateIncome(earnings, source) {
-        if (!source) return earnings * 0.5;
-        try {
-            if (source.rule === 'custom' && source.customFormula) {
-                const E = earnings;
-                const sanitized = source.customFormula.replace(/[^E0-9+\-*/().\s]/g, '');
-                return Function('"use strict"; return (' + sanitized + ')')();
-            } else if (source.rule === 'split') {
-                const p = (source.percent || source.amount || 50) / 100;
-                return earnings > (2 * source.base) ? source.base + (earnings - 2 * source.base) * p : source.base;
-            } else if (source.rule === 'fixed') {
-                return earnings;
-            } else {
-                return earnings * ((source.percent || source.amount || 50) / 100);
-            }
-        } catch(e) { return earnings * 0.5; }
-    }
-
-    function calcNet(r) {
+    const r = data.records[idx];
+    document.getElementById('editIdx').value = idx;
+    document.getElementById('recDate').value = r.date;
+    selectStatus(r.status || 'pending');
+    
+    document.getElementById('recPatients').value = r.patients || '';
+    document.getElementById('recHours').value = r.hours || '';
+    document.getElementById('recEchos').value = r.echos || '';
+    
+    const typeBtn = r.type === 'clinic' ? 0 : r.type === 'shift' ? 1 : 2;
+    document.querySelectorAll('.type-btn')[typeBtn].click();
+    
+    setTimeout(() => {
         if (r.type === 'clinic') {
-            const clinic = data.clinics[r.sourceIndex];
-            const exp = calculateIncome(r.earnings, clinic);
-            return exp - (r.fees || 0);
+            document.getElementById('recClinic').value = r.sourceIndex;
+            document.getElementById('recEarnings').value = r.earnings;
         } else if (r.type === 'shift') {
-            let base = 0;
-            if (r.calcMethod === 'hourly') {
-                base = ((r.hours || 0) * (r.rate || 0));
-            } else {
-                base = r.fixedAmount || 0;
-            }
-            return base + (r.bonus || 0) - (r.fees || 0);
-        } else {
-            return (r.amount || 0) - (r.fees || 0);
-        }
-    }
-
-    function calcTotals() {
-        const monthStr = new Date().toISOString().slice(0, 7);
-        let received = 0, pending = 0;
-        
-        data.records.forEach(r => {
-            if (r.date.startsWith(monthStr)) {
-                const net = calcNet(r);
-                if (r.status === 'received') received += net;
-                else pending += net;
-            }
-        });
-        
-        document.getElementById('receivedTotal').textContent = '$' + Math.round(received).toLocaleString();
-        document.getElementById('pendingTotal').textContent = '$' + Math.round(pending).toLocaleString();
-        document.getElementById('monthTotal').textContent = '$' + Math.round(received + pending).toLocaleString();
-    }
-
-    function renderVerify() {
-        const container = document.getElementById('verifyList');
-        const pending = data.records.filter(r => r.status !== 'received');
-        
-        if (pending.length === 0) {
-            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎉</div>All caught up!<br>No pending payments.</div>';
-            return;
-        }
-        
-        const bySource = {};
-        pending.forEach(r => {
-            let key, name, type;
-            if (r.type === 'clinic') {
-                const c = data.clinics[r.sourceIndex];
-                name = c ? c.name : 'Unknown Clinic';
-                key = 'c-' + r.sourceIndex;
-                type = 'clinic';
-            } else if (r.type === 'shift') {
-                name = r.shiftName || 'Shift';
-                key = 's-' + r.date + '-' + (r.shiftName || '');
-                type = 'shift';
-            } else {
-                name = r.otherName || 'Other';
-                key = 'o-' + r.date + '-' + (r.otherName || '');
-                type = 'other';
-            }
+            document.getElementById('recShift').value = r.sourceIndex >= 0 ? r.sourceIndex : '';
+            document.getElementById('recShiftName').value = r.shiftName || '';
+            document.getElementById('recBonusAmount').value = r.bonus || '';
+            document.getElementById('recBonusReason').value = r.bonusReason || '';
             
-            if (!bySource[key]) bySource[key] = { name, type, records: [], total: 0 };
-            bySource[key].records.push(r);
-            bySource[key].total += calcNet(r);
-        });
-        
-        container.innerHTML = '';
-        Object.entries(bySource).forEach(([key, info]) => {
-            const icon = info.type === 'clinic' ? '🏥' : info.type === 'shift' ? '⏰' : '⭐';
-            container.innerHTML += `
-                <div class="verify-card">
-                    <div class="verify-header">
-                        <span class="verify-title">${icon} ${info.name}</span>
-                        <span class="verify-amount">$${info.total.toFixed(0)}</span>
-                    </div>
-                    <div class="verify-details">${info.records.length} pending • ${info.records[0].date}</div>
-                    <button class="sm-btn" onclick="markReceived('${key}', '${info.type}')" style="margin-top:8px;">✅ Mark Received</button>
+            const calcMethod = r.calcMethod || 'fixed';
+            selectShiftCalc(calcMethod, document.getElementById(calcMethod === 'fixed' ? 'calc-fixed' : 'calc-hourly'));
+            
+            if (calcMethod === 'fixed') {
+                document.getElementById('recShiftFixed').value = r.fixedAmount || '';
+            } else {
+                document.getElementById('recShiftHours').value = r.hours || '';
+                document.getElementById('recShiftRate').value = r.rate || '';
+            }
+        } else {
+            document.getElementById('recOtherName').value = r.otherName || '';
+            document.getElementById('recOtherAmount').value = r.amount || '';
+            document.getElementById('recOtherDesc').value = r.otherDesc || '';
+        }
+        document.getElementById('recFees').value = r.fees || '';
+        document.getElementById('recNotes').value = r.notes || '';
+        calcPreview();
+    }, 100);
+    
+    showSec('add');
+}
+
+function openModal(type) {
+    document.getElementById('modalSourceType').value = type;
+    
+    const titles = { clinic: '🏥 Add Clinic', shift: '⏰ Add Shift Template', other: '⭐ Add Other Source' };
+    document.getElementById('modalTitle').textContent = titles[type];
+    document.getElementById('addSourceModal').classList.add('active');
+    document.getElementById('modalName').value = '';
+    
+    const isClinic = type === 'clinic';
+    document.getElementById('formulaSection').style.display = isClinic ? 'block' : 'none';
+    document.getElementById('payTypeGroup').style.display = isClinic ? 'block' : 'none';
+    
+    if (type === 'shift') {
+        document.getElementById('amountLabel').textContent = 'Default Fixed Amount (Optional)';
+        document.getElementById('amountHint').textContent = 'e.g. 3000 for a typical shift';
+        selectRule('fixed', document.getElementById('rule-fixed'));
+    } else if (type === 'other') {
+        document.getElementById('amountLabel').textContent = 'Default Amount (Optional)';
+        document.getElementById('amountHint').textContent = 'Leave 0 for variable amounts';
+        selectRule('fixed', document.getElementById('rule-fixed'));
+    } else {
+        document.getElementById('amountLabel').textContent = 'Percentage Rate';
+        document.getElementById('amountHint').textContent = 'Enter percentage (e.g. 50 for 50%)';
+    }
+}
+
+function closeModal() {
+    document.getElementById('addSourceModal').classList.remove('active');
+}
+
+function selectRule(rule, el) {
+    tempRule = rule;
+    document.querySelectorAll('#rule-percent, #rule-split, #rule-fixed, #rule-custom').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    
+    document.getElementById('basePayGroup').style.display = rule === 'split' ? 'block' : 'none';
+    document.getElementById('customFormulaGroup').style.display = rule === 'custom' ? 'block' : 'none';
+}
+
+function selectPayType(type, el) {
+    tempPayType = type;
+    document.querySelectorAll('#pay-daily, #pay-monthly').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('reminderGroup').style.display = type === 'monthly' ? 'block' : 'none';
+}
+
+function saveSource() {
+    const type = document.getElementById('modalSourceType').value;
+    const name = document.getElementById('modalName').value.trim();
+    if (!name) return alert('Please enter a name');
+    
+    const item = {
+        name,
+        amount: Number(document.getElementById('modalAmount').value) || 0
+    };
+    
+    if (type === 'clinic') {
+        item.payType = tempPayType;
+        item.rule = tempRule;
+        if (tempRule === 'split') item.base = Number(document.getElementById('modalBasePay').value) || 0;
+        if (tempRule === 'custom') item.customFormula = document.getElementById('modalCustomFormula').value;
+        if (tempRule === 'percent') item.percent = item.amount;
+        if (tempPayType === 'monthly') item.remindDay = Number(document.getElementById('modalReminderDay').value) || 28;
+        data.clinics.push(item);
+    } else if (type === 'shift') {
+        data.shifts.push(item);
+    } else {
+        data.others.push(item);
+    }
+    
+    saveData();
+    closeModal();
+    refreshSettings();
+}
+
+function refreshSettings() {
+    const cList = document.getElementById('clinicsList');
+    if (data.clinics.length === 0) {
+        cList.innerHTML = '<p class="small" style="color:#999;">No clinics added.</p>';
+    } else {
+        cList.innerHTML = data.clinics.map((c, i) => `
+            <div class="job-item" onclick="openSourceDetail('${escapeHtml(c.name)}', 'clinic')">
+                <div class="job-info">
+                    <strong>${escapeHtml(c.name)}</strong>
+                    <span>${c.rule} • ${c.payType}</span>
                 </div>
-            `;
-        });
+                <button class="danger" onclick="event.stopPropagation(); deleteClinic(${i})">🗑</button>
+            </div>
+        `).join('');
     }
-
-    function markReceived(key, type) {
-        data.records.forEach(r => {
-            if (r.status === 'received') return;
-            let rKey;
-            if (r.type === 'clinic') rKey = 'c-' + r.sourceIndex;
-            else if (r.type === 'shift') rKey = 's-' + r.date + '-' + (r.shiftName || '');
-            else rKey = 'o-' + r.date + '-' + (r.otherName || '');
-            
-            if (rKey === key) r.status = 'received';
-        });
-        saveData();
-        renderVerify();
-        calcTotals();
-        renderCalendar();
+    
+    const sList = document.getElementById('shiftsList');
+    if (data.shifts.length === 0) {
+        sList.innerHTML = '<p class="small" style="color:#999;">No shift templates.</p>';
+    } else {
+        sList.innerHTML = data.shifts.map((s, i) => `
+            <div class="job-item" onclick="openSourceDetail('${escapeHtml(s.name)}', 'shift')">
+                <div class="job-info">
+                    <strong>${escapeHtml(s.name)}</strong>
+                    <span>${s.amount > 0 ? '$' + s.amount + ' fixed' : 'Variable'}</span>
+                </div>
+                <button class="danger" onclick="event.stopPropagation(); deleteShift(${i})">🗑</button>
+            </div>
+        `).join('');
     }
-
-    function showSec(id) {
-        ['home', 'add', 'verify', 'settings'].forEach(s => {
-            document.getElementById('sec-' + s).style.display = (s === id) ? 'block' : 'none';
-            document.getElementById('btn-' + s).classList.toggle('active', s === id);
-        });
-        
-        document.getElementById('topSummary').style.display = id === 'home' || id === 'verify' ? 'flex' : 'none';
-        
-        if (id === 'home') { renderCalendar(); calcTotals(); }
-        if (id === 'add') { refreshSelectors(); document.getElementById('recDate').value = selectedDate; }
-        if (id === 'verify') { renderVerify(); }
-        if (id === 'settings') { refreshSettings(); }
+    
+    const oList = document.getElementById('othersList');
+    if (data.others.length === 0) {
+        oList.innerHTML = '<p class="small" style="color:#999;">No other sources added.</p>';
+    } else {
+        oList.innerHTML = data.others.map((o, i) => `
+            <div class="job-item" onclick="openSourceDetail('${escapeHtml(o.name)}', 'other')">
+                <div class="job-info">
+                    <strong>${escapeHtml(o.name)}</strong>
+                    <span>${o.amount > 0 ? '$' + o.amount : 'Variable amount'}</span>
+                </div>
+                <button class="danger" onclick="event.stopPropagation(); deleteOther(${i})">🗑</button>
+            </div>
+        `).join('');
     }
+}
 
-    function backupData() {
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `moneycalc_backup_${new Date().toISOString().slice(0, 10)}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
+function escapeHtml(text) {
+    if (!text) return '';
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function deleteClinic(idx) { 
+    if (confirm('Delete this clinic? All associated records will lose clinic info.')) {
+        data.clinics.splice(idx, 1); 
+        saveData(); 
+        refreshSettings(); 
     }
-
-    function restoreFromFile(file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            try {
-                const obj = JSON.parse(reader.result);
-                if (obj.clinics && obj.records) {
-                    if (confirm('Replace all data?')) {
-                        data = obj;
-                        if (!data.others) data.others = [];
-                        saveData();
-                        alert('Restored!');
-                        showSec('home');
-                    }
-                }
-            } catch(e) { alert('Invalid file'); }
-        };
-        reader.readAsText(file);
+}
+function deleteShift(idx) { 
+    if (confirm('Delete this shift template?')) {
+        data.shifts.splice(idx, 1); 
+        saveData(); 
+        refreshSettings(); 
     }
-
-    // ==================== STATISTICS MODAL FUNCTIONS ====================
-
-    function openStatsModal() {
-        document.getElementById('statsModal').classList.add('active');
-        document.body.style.overflow = 'hidden';
-        updateStatistics();
+}
+function deleteOther(idx) { 
+    if (confirm('Delete this source?')) {
+        data.others.splice(idx, 1); 
+        saveData(); 
+        refreshSettings(); 
     }
+}
 
-    function closeStatsModal() {
-        document.getElementById('statsModal').classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    function switchStatsTab(tabName, el) {
-        document.querySelectorAll('.stats-tab').forEach(t => t.classList.remove('active'));
-        el.classList.add('active');
-        document.querySelectorAll('.stats-tab-content').forEach(c => c.classList.remove('active'));
-        document.getElementById('tab-' + tabName).classList.add('active');
-    }
-
-    function updateStatistics() {
-        if (data.records.length === 0) {
-            document.getElementById('statTotalEarnings').textContent = '$0';
-            document.getElementById('statTotalEntries').textContent = '0';
-            document.getElementById('statPendingAmount').textContent = '$0';
-            document.getElementById('statAvgPerEntry').textContent = '$0';
-            document.getElementById('trendChart').innerHTML = '<div class="empty-stats">No data available</div>';
-            document.getElementById('topSourcesList').innerHTML = '<div class="empty-stats">Add entries to see source comparison</div>';
-            document.getElementById('sourceComparisonList').innerHTML = '<div class="empty-stats">No source data available</div>';
-            document.getElementById('sourceDistributionChart').innerHTML = '<div class="empty-stats">No data available</div>';
-            document.getElementById('productivitySection').style.display = 'none';
-            document.getElementById('clinicStatsList').innerHTML = '<div class="empty-stats">No clinic data with productivity metrics</div>';
-            document.getElementById('shiftStatsList').innerHTML = '<div class="empty-stats">No shift data with hours recorded</div>';
-            return;
+function calculateIncome(earnings, source) {
+    if (!source) return earnings * 0.5;
+    if (!earnings || earnings <= 0) return 0;
+    try {
+        if (source.rule === 'custom' && source.customFormula) {
+            const E = earnings;
+            const sanitized = source.customFormula.replace(/[^E0-9+\-*/().\s]/g, '');
+            return Function('"use strict"; return (' + sanitized + ')')();
+        } else if (source.rule === 'split') {
+            const p = (source.percent || source.amount || 50) / 100;
+            return earnings > (2 * source.base) ? source.base + (earnings - 2 * source.base) * p : source.base;
+        } else if (source.rule === 'fixed') {
+            return earnings;
+        } else {
+            return earnings * ((source.percent || source.amount || 50) / 100);
         }
+    } catch(e) { return earnings * 0.5; }
+}
 
-        let totalEarnings = 0, pendingEarnings = 0, totalPatients = 0, totalEchos = 0, totalHours = 0;
-        const bySource = {}, byType = { clinic: 0, shift: 0, other: 0 };
+function calcNet(r) {
+    if (r.type === 'clinic') {
+        const clinic = data.clinics[r.sourceIndex];
+        const exp = calculateIncome(r.earnings, clinic);
+        return exp - (r.fees || 0);
+    } else if (r.type === 'shift') {
+        let base = 0;
+        const method = r.calcMethod || 'fixed';
+        if (method === 'hourly') {
+            base = ((r.hours || 0) * (r.rate || 0));
+        } else {
+            base = r.fixedAmount || 0;
+        }
+        return base + (r.bonus || 0) - (r.fees || 0);
+    } else {
+        return (r.amount || 0) - (r.fees || 0);
+    }
+}
 
-        data.records.forEach(r => {
+function calcTotals() {
+    const monthStr = new Date().toISOString().slice(0, 7);
+    let received = 0, pending = 0;
+    
+    data.records.forEach(r => {
+        if (r.date.startsWith(monthStr)) {
             const net = calcNet(r);
-            totalEarnings += net;
-            if (r.status !== 'received') pendingEarnings += net;
-            byType[r.type] = (byType[r.type] || 0) + net;
-            
-            let sourceName;
-            if (r.type === 'clinic') {
-                const c = data.clinics[r.sourceIndex];
-                sourceName = c ? c.name : 'Unknown Clinic';
-                if (r.patients) totalPatients += r.patients;
-                if (r.echos) totalEchos += r.echos;
-                if (r.hours) totalHours += r.hours;
-            } else if (r.type === 'shift') {
-                sourceName = r.shiftName || 'Shift';
-                if (r.patients) totalPatients += r.patients;
-                if (r.echos) totalEchos += r.echos;
-                                if (r.hours) totalHours += r.hours;
-            } else {
-                sourceName = r.otherName || 'Other';
-            }
-            
-            if (!bySource[sourceName]) {
-                bySource[sourceName] = { total: 0, count: 0, type: r.type, patients: 0, echos: 0, hours: 0 };
-            }
-            bySource[sourceName].total += net;
-            bySource[sourceName].count++;
-            if (r.patients) bySource[sourceName].patients += r.patients;
-            if (r.echos) bySource[sourceName].echos += r.echos;
-            if (r.hours) bySource[sourceName].hours += r.hours;
-        });
-
-        document.getElementById('statTotalEarnings').textContent = '$' + Math.round(totalEarnings).toLocaleString();
-        document.getElementById('statTotalEntries').textContent = data.records.length;
-        document.getElementById('statPendingAmount').textContent = '$' + Math.round(pendingEarnings).toLocaleString();
-        document.getElementById('statAvgPerEntry').textContent = '$' + Math.round(totalEarnings / data.records.length).toLocaleString();
-
-        renderTrendChart();
-        renderTopSources(bySource, totalEarnings);
-        renderSourceComparison(bySource, totalEarnings);
-        renderSourceDistribution(byType, totalEarnings);
-        updateProductivityStats(totalPatients, totalEchos, totalHours, totalEarnings, bySource);
-    }
-
-    function renderTrendChart() {
-        const container = document.getElementById('trendChart');
-        const days = [];
-        const today = new Date();
-        for (let i = 6; i >= 0; i--) {
-            const d = new Date(today);
-            d.setDate(d.getDate() - i);
-            days.push(d.toISOString().slice(0, 10));
+            if (r.status === 'received') received += net;
+            else pending += net;
         }
-        const dayTotals = days.map(day => {
-            return data.records.filter(r => r.date === day).reduce((sum, r) => sum + calcNet(r), 0);
-        });
-        const maxVal = Math.max(...dayTotals, 1);
-        const dayLabels = days.map(d => new Date(d).toLocaleDateString('en-US', { weekday: 'short' }));
-        container.innerHTML = dayTotals.map((val, i) => {
-            const height = maxVal > 0 ? (val / maxVal * 100) : 0;
-            return `<div class="trend-column"><div class="trend-bar" style="height: ${Math.max(height, 4)}px; ${val === 0 ? 'opacity: 0.3;' : ''}"></div><div class="trend-label">${dayLabels[i]}</div></div>`;
-        }).join('');
-    }
-
-    function renderTopSources(bySource, totalEarnings) {
-        const container = document.getElementById('topSourcesList');
-        const sorted = Object.entries(bySource).sort((a, b) => b[1].total - a[1].total).slice(0, 5);
-        const colors = ['#0fa25a', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'];
-        container.innerHTML = sorted.map(([name, info], i) => {
-            const percent = totalEarnings > 0 ? (info.total / totalEarnings * 100).toFixed(1) : 0;
-            const icon = info.type === 'clinic' ? '🏥' : info.type === 'shift' ? '⏰' : '⭐';
-            return `<div class="source-bar-item"><div class="source-bar-header"><span class="source-bar-name">${icon} ${name}</span><span class="source-bar-amount">$${info.total.toFixed(0)}</span></div><div class="source-bar-wrapper"><div class="source-bar-fill" style="width: ${percent}%; background: ${colors[i % colors.length]};"></div><span class="source-bar-percent">${percent}%</span></div></div>`;
-        }).join('');
-    }
-
-    function renderSourceComparison(bySource, totalEarnings) {
-        const container = document.getElementById('sourceComparisonList');
-        const sorted = Object.entries(bySource).sort((a, b) => b[1].total - a[1].total);
-        const maxVal = Math.max(...sorted.map(s => s[1].total), 1);
-        const colors = ['#0fa25a', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6'];
-        container.innerHTML = sorted.map(([name, info], i) => {
-            const percent = totalEarnings > 0 ? (info.total / totalEarnings * 100).toFixed(1) : 0;
-            const width = maxVal > 0 ? (info.total / maxVal * 100) : 0;
-            const icon = info.type === 'clinic' ? '🏥' : info.type === 'shift' ? '⏰' : '⭐';
-            let productivity = '';
-            if (info.patients || info.echos) {
-                const parts = [];
-                if (info.patients) parts.push(`${info.patients} patients`);
-                if (info.echos) parts.push(`${info.echos} echos`);
-                if (info.hours) parts.push(`${info.hours}h`);
-                productivity = `<div style="font-size: 11px; color: #888; margin-top: 4px;">${parts.join(' • ')}</div>`;
-            }
-            return `<div class="source-bar-item"><div class="source-bar-header"><span class="source-bar-name">${icon} ${name} <span style="color: #999; font-weight: normal;">(${info.count})</span></span><span class="source-bar-amount">$${info.total.toFixed(0)}</span></div>${productivity}<div class="source-bar-wrapper"><div class="source-bar-fill" style="width: ${width}%; background: ${colors[i % colors.length]};"></div><span class="source-bar-percent">${percent}%</span></div></div>`;
-        }).join('');
-    }
-
-    function renderSourceDistribution(byType, totalEarnings) {
-        const container = document.getElementById('sourceDistributionChart');
-        const types = [
-            { key: 'clinic', label: 'Clinic', color: '#0fa25a' },
-            { key: 'shift', label: 'Shift', color: '#3b82f6' },
-            { key: 'other', label: 'Other', color: '#8b5cf6' }
-        ];
-        const maxVal = Math.max(...types.map(t => byType[t.key] || 0), 1);
-        container.innerHTML = types.map(t => {
-            const val = byType[t.key] || 0;
-            const percent = totalEarnings > 0 ? (val / totalEarnings * 100).toFixed(1) : 0;
-            const height = maxVal > 0 ? (val / maxVal * 100) : 0;
-            return `<div class="trend-column"><div class="trend-bar" style="height: ${Math.max(height, 4)}px; background: ${t.color};"></div><div class="trend-label">${t.label}</div><div style="font-size: 10px; color: #666; margin-top: 4px;">${percent}%</div></div>`;
-        }).join('');
-    }
-
-    function updateProductivityStats(totalPatients, totalEchos, totalHours, totalEarnings, bySource) {
-        const hasProductivity = totalPatients > 0 || totalEchos > 0 || totalHours > 0;
-        if (hasProductivity) {
-            document.getElementById('productivitySection').style.display = 'block';
-            document.getElementById('statTotalPatients').textContent = totalPatients.toLocaleString();
-            document.getElementById('statTotalEchos').textContent = totalEchos.toLocaleString();
-            document.getElementById('statTotalHours').textContent = totalHours.toFixed(1);
-            const avgPerPatient = totalPatients > 0 ? (totalEarnings / totalPatients).toFixed(0) : 0;
-            const avgPerHour = totalHours > 0 ? (totalEarnings / totalHours).toFixed(0) : 0;
-            document.getElementById('statAvgPerPatient').textContent = '$' + avgPerPatient;
-            document.getElementById('statAvgPerHour').textContent = '$' + avgPerHour;
-        } else {
-            document.getElementById('productivitySection').style.display = 'none';
-        }
-
-        const clinicEntries = Object.entries(bySource).filter(([_, info]) => info.type === 'clinic' && (info.patients || info.echos));
-        const clinicContainer = document.getElementById('clinicStatsList');
-        if (clinicEntries.length > 0) {
-            clinicContainer.innerHTML = clinicEntries.map(([name, info]) => {
-                const avgPerPatient = info.patients > 0 ? (info.total / info.patients).toFixed(0) : 0;
-                const avgPerEcho = info.echos > 0 ? (info.total / info.echos).toFixed(0) : 0;
-                return `<div class="source-bar-item" style="padding: 12px; background: #f9f9f9; border-radius: 8px; margin-bottom: 8px;"><div style="font-weight: bold; margin-bottom: 8px;">🏥 ${name}</div><div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 13px; color: #666;"><div>💰 Total: $${info.total.toFixed(0)}</div><div>👤 Patients: ${info.patients || 0}</div><div>🫀 Echos: ${info.echos || 0}</div><div>⏱️ Hours: ${info.hours ? info.hours.toFixed(1) : 0}</div><div>💵 $/Patient: $${avgPerPatient}</div><div>💵 $/Echo: $${avgPerEcho}</div></div></div>`;
-            }).join('');
-        } else {
-            clinicContainer.innerHTML = '<div class="empty-stats">No clinic data with productivity metrics</div>';
-        }
-
-        const shiftEntries = Object.entries(bySource).filter(([_, info]) => info.type === 'shift' && info.hours > 0);
-        const shiftContainer = document.getElementById('shiftStatsList');
-        if (shiftEntries.length > 0) {
-            shiftContainer.innerHTML = shiftEntries.map(([name, info]) => {
-                const avgPerHour = info.hours > 0 ? (info.total / info.hours).toFixed(0) : 0;
-                const avgPerPatient = info.patients > 0 ? (info.total / info.patients).toFixed(0) : 0;
-                return `<div class="source-bar-item" style="padding: 12px; background: #f9f9f9; border-radius: 8px; margin-bottom: 8px;"><div style="font-weight: bold; margin-bottom: 8px;">⏰ ${name}</div><div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 13px; color: #666;"><div>💰 Total: $${info.total.toFixed(0)}</div><div>⏱️ Hours: ${info.hours.toFixed(1)}</div><div>👤 Patients: ${info.patients || 0}</div><div>🫀 Echos: ${info.echos || 0}</div><div>💵 $/Hour: $${avgPerHour}</div><div>💵 $/Patient: $${avgPerPatient}</div></div></div>`;
-            }).join('');
-        } else {
-            shiftContainer.innerHTML = '<div class="empty-stats">No shift data with hours recorded</div>';
-        }
-    }
-
-    document.getElementById('addSourceModal').addEventListener('click', function(e) {
-        if (e.target === this) closeModal();
     });
+    
+    document.getElementById('receivedTotal').textContent = '$' + Math.round(received).toLocaleString();
+    document.getElementById('pendingTotal').textContent = '$' + Math.round(pending).toLocaleString();
+    document.getElementById('monthTotal').textContent = '$' + Math.round(received + pending).toLocaleString();
+}
 
-    document.getElementById('statsModal').addEventListener('click', function(e) {
-        if (e.target === this) closeStatsModal();
+function renderVerify() {
+    const container = document.getElementById('verifyList');
+    const pending = data.records.filter(r => r.status !== 'received');
+    
+    if (pending.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎉</div>All caught up!<br>No pending payments.</div>';
+        return;
+    }
+    
+    const bySource = {};
+    pending.forEach(r => {
+        let key, name, type;
+        if (r.type === 'clinic') {
+            const c = data.clinics[r.sourceIndex];
+            name = c ? c.name : 'Unknown Clinic';
+            key = 'c-' + r.sourceIndex;
+            type = 'clinic';
+        } else if (r.type === 'shift') {
+            name = r.shiftName || 'Shift';
+            key = 's-' + r.date + '-' + (r.shiftName || '');
+            type = 'shift';
+        } else {
+            name = r.otherName || 'Other';
+            key = 'o-' + r.date + '-' + (r.otherName || '');
+            type = 'other';
+        }
+        
+        if (!bySource[key]) bySource[key] = { name, type, records: [], total: 0 };
+        bySource[key].records.push(r);
+        bySource[key].total += calcNet(r);
     });
+    
+    container.innerHTML = '';
+    Object.entries(bySource).forEach(([key, info]) => {
+        const icon = info.type === 'clinic' ? '🏥' : info.type === 'shift' ? '⏰' : '⭐';
+        container.innerHTML += `
+            <div class="verify-card">
+                <div class="verify-header">
+                    <span class="verify-title">${icon} ${escapeHtml(info.name)}</span>
+                    <span class="verify-amount">$${info.total.toFixed(0)}</span>
+                </div>
+                <div class="verify-details">${info.records.length} pending • ${info.records[0].date}</div>
+                <button class="sm-btn" onclick="event.stopPropagation(); markReceived('${key}', '${info.type}')" style="margin-top:8px;">✅ Mark Received</button>
+            </div>
+        `;
+    });
+}
 
-    renderCalendar();
+function markReceived(key, type) {
+    data.records.forEach(r => {
+        if (r.status === 'received') return;
+        let rKey;
+        if (r.type === 'clinic') rKey = 'c-' + r.sourceIndex;
+        else if (r.type === 'shift') rKey = 's-' + r.date + '-' + (r.shiftName || '');
+        else rKey = 'o-' + r.date + '-' + (r.otherName || '');
+        
+        if (rKey === key) r.status = 'received';
+    });
+    saveData();
+    renderVerify();
     calcTotals();
-</script>
+    renderCalendar();
+}
 
-<script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('service-worker.js', {scope: '/'})
-                .then(reg => console.log('SW registered:', reg.scope))
-                .catch(err => console.warn('SW failed:', err));
-        });
-    }
-
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', e => {
-        e.preventDefault();
-        deferredPrompt = e;
-        const btn = document.getElementById('pwaInstallBtn');
-        if (btn) btn.style.display = 'flex';
+function showSec(id) {
+    ['home', 'add', 'verify', 'settings'].forEach(s => {
+        document.getElementById('sec-' + s).style.display = (s === id) ? 'block' : 'none';
+        document.getElementById('btn-' + s).classList.toggle('active', s === id);
     });
+    
+    document.getElementById('topSummary').style.display = id === 'home' || id === 'verify' ? 'flex' : 'none';
+    
+    if (id === 'home') { renderCalendar(); calcTotals(); }
+    if (id === 'add') { refreshSelectors(); document.getElementById('recDate').value = selectedDate; }
+    if (id === 'verify') { renderVerify(); }
+    if (id === 'settings') { refreshSettings(); }
+}
 
-    window.addEventListener('appinstalled', () => {
-        const btn = document.getElementById('pwaInstallBtn');
-        if (btn) btn.style.display = 'none';
-        deferredPrompt = null;
-    });
+function backupData() {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `moneycalc_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
 
-    function triggerPwaInstall() {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then(choice => {
-                deferredPrompt = null;
-                const btn = document.getElementById('pwaInstallBtn');
-                if (btn) btn.style.display = 'none';
-            });
-        } else {
-            alert('To install:\n\niOS/Safari: tap the Share button ↑ then "Add to Home Screen"\n\nAndroid/Chrome: tap ⋮ menu then "Add to Home screen" or "Install app"');
+function restoreFromFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+        try {
+            const obj = JSON.parse(reader.result);
+            if (obj.clinics && obj.records) {
+                if (confirm('Replace all data? This cannot be undone.')) {
+                    data = obj;
+                    if (!data.others) data.others = [];
+                    if (!data.settings) data.settings = { reminderDay: 28 };
+                    saveData();
+                    alert('Restored successfully!');
+                    showSec('home');
+                }
+            } else {
+                alert('Invalid backup file format');
+            }
+        } catch(e) { 
+            alert('Error reading file: ' + e.message); 
         }
-    }
+    };
+    reader.onerror = () => alert('Error reading file');
+    reader.readAsText(file);
+}
+
+function exportCSV() {
+    const headers = ['Date', 'Type', 'Source', 'Earnings/Revenue', 'Your Share', 'Hours', 'Patients', 'Echos', 'Bonus', 'Fees', 'Net', 'Status', 'Notes'];
+    const rows = data.records.map(r => {
+        let source, earnings, yourShare;
+        if (r.type === 'clinic') {
+            const c = data.clinics[r.sourceIndex];
+            source = c ? c.name : 'Unknown';
+            earnings = r.earnings;
+            yourShare = r.expected?.toFixed(2) || '';
+        } else if (r.type === 'shift') {
+            source = r.shiftName || 'Shift';
+            earnings = r.calcMethod === 'hourly' ? (r.hours * r.rate) : r.fixedAmount;
+            yourShare = earnings;
+        } else {
+            source = r.otherName || 'Other';
+            earnings = r.amount;
+            yourShare = earnings;
+        }
+        
+        const notes = (r.notes || '').replace(/"/g, '""');
+        
+        return [
+            r.date,
+            r.type,
+            '"' + (source || '').replace(/"/g, '""') + '"',
+            earnings,
+            yourShare,
+            r.hours || '',
+            r.patients || '',
+            r.echos || '',
+            r.bonus || '',
+            r.fees || '',
+            calcNet(r).toFixed(2),
+            r.status || 'pending',
+            '"' + notes + '"'
+        ].join(',');
+    });
+    
+    const csv = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `moneycalc_export_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+document.getElementById('addSourceModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+
+document.getElementById('sourceDetailModal').addEventListener('click', function(e) {
+    if (e.target === this) closeSourceDetail();
+});
+
+renderCalendar();
+calcTotals();
 </script>
 
 </body>
 </html>
-
-                
