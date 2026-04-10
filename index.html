@@ -125,11 +125,39 @@
     .type-btn .icon { font-size: 24px; display: block; margin-bottom: 4px; }
     .type-btn .label { font-size: 12px; font-weight: 600; }
     
-    .verify-card { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .verify-card { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 12px; padding: 16px; margin-bottom: 12px; cursor:pointer; transition:box-shadow 0.15s; }
+    .verify-card:active { box-shadow: 0 2px 12px rgba(0,0,0,0.12); }
     .verify-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .verify-title { font-weight: bold; color: #333; }
     .verify-amount { font-size: 1.2rem; font-weight: bold; color: var(--warning); }
     .verify-details { font-size: 13px; color: #666; margin-bottom: 12px; }
+    .verify-received-badge { display:inline-block; background:#e8f5e9; color:#2e7d32; font-size:12px; font-weight:600; border-radius:6px; padding:2px 8px; margin-top:4px; }
+    .verify-btn-row { display:flex; gap:8px; margin-top:10px; }
+    .verify-btn-full { flex:1; background:var(--primary); color:white; border:none; border-radius:8px; padding:9px 0; font-size:13px; font-weight:600; cursor:pointer; }
+    .verify-btn-partial { flex:1; background:#fff3e0; color:#e65100; border:1px solid #ffcc80; border-radius:8px; padding:9px 0; font-size:13px; font-weight:600; cursor:pointer; }
+
+    /* Verify payment modal */
+    #verifyPayModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:1050; align-items:flex-end; justify-content:center; }
+    #verifyPayModal.open { display:flex; }
+    .vpm-sheet { background:white; border-radius:20px 20px 0 0; width:100%; max-width:480px; padding:24px 20px 36px; animation:slideUp 0.3s ease; }
+    .vpm-handle { width:40px; height:4px; background:#e0e0e0; border-radius:2px; margin:0 auto 20px; }
+    .vpm-title { font-size:17px; font-weight:700; color:#1e293b; margin-bottom:4px; }
+    .vpm-sub { font-size:13px; color:#64748b; margin-bottom:20px; }
+    .vpm-owed-row { display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border-radius:12px; padding:12px 16px; margin-bottom:8px; }
+    .vpm-owed-label { font-size:13px; color:#64748b; }
+    .vpm-owed-val { font-size:18px; font-weight:700; color:#1e293b; }
+    .vpm-already-row { display:flex; justify-content:space-between; align-items:center; background:#e8f5e9; border-radius:12px; padding:10px 16px; margin-bottom:16px; }
+    .vpm-already-label { font-size:13px; color:#2e7d32; }
+    .vpm-already-val { font-size:15px; font-weight:700; color:#2e7d32; }
+    .vpm-input-label { font-size:13px; font-weight:600; color:#374151; margin-bottom:6px; }
+    .vpm-amount-wrap { position:relative; margin-bottom:20px; }
+    .vpm-amount-wrap span { position:absolute; left:14px; top:50%; transform:translateY(-50%); font-size:18px; color:#374151; font-weight:600; }
+    .vpm-amount-wrap input { width:100%; border:2px solid #e2e8f0; border-radius:12px; padding:14px 14px 14px 32px; font-size:20px; font-weight:700; color:#1e293b; outline:none; box-sizing:border-box; }
+    .vpm-amount-wrap input:focus { border-color:var(--primary); }
+    .vpm-actions { display:flex; flex-direction:column; gap:10px; }
+    .vpm-btn-full { background:var(--primary); color:white; border:none; border-radius:12px; padding:15px; font-size:15px; font-weight:700; cursor:pointer; }
+    .vpm-btn-partial { background:#fff3e0; color:#e65100; border:1px solid #ffcc80; border-radius:12px; padding:15px; font-size:15px; font-weight:700; cursor:pointer; }
+    .vpm-btn-cancel { background:none; border:none; color:#94a3b8; font-size:14px; cursor:pointer; padding:8px; }
     
     .summary-row { display: flex; justify-content: space-between; padding: 10px 4px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
     .summary-row:last-child { border-bottom: none; }
@@ -482,6 +510,33 @@
 </div>
 
 <!-- EXPENSES BOTTOM SHEET -->
+<!-- VERIFY PAYMENT MODAL -->
+<div id="verifyPayModal" onclick="if(event.target===this)closeVerifyPayModal()">
+    <div class="vpm-sheet">
+        <div class="vpm-handle"></div>
+        <div class="vpm-title" id="vpmName"></div>
+        <div class="vpm-sub" id="vpmSub"></div>
+        <div class="vpm-owed-row">
+            <span class="vpm-owed-label">Total remaining</span>
+            <span class="vpm-owed-val" id="vpmOwed"></span>
+        </div>
+        <div class="vpm-already-row" id="vpmAlreadyRow" style="display:none;">
+            <span class="vpm-already-label">✅ Already received</span>
+            <span class="vpm-already-val" id="vpmAlready"></span>
+        </div>
+        <div class="vpm-input-label">How much did you receive?</div>
+        <div class="vpm-amount-wrap">
+            <span>$</span>
+            <input type="number" id="vpmAmount" placeholder="0" min="0" step="0.01" inputmode="decimal">
+        </div>
+        <div class="vpm-actions">
+            <button class="vpm-btn-full" onclick="applyVerifyFull()">✅ Mark Fully Received</button>
+            <button class="vpm-btn-partial" onclick="saveVerifyPayment()">💰 Save Partial Amount</button>
+            <button class="vpm-btn-cancel" onclick="closeVerifyPayModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
 <!-- UPDATE AVAILABLE BANNER -->
 <div id="updateBanner">
     <div class="ub-text">
@@ -1844,13 +1899,13 @@ function calcTotals() {
 
 function renderVerify() {
     const container = document.getElementById('verifyList');
-    const pending = data.records.filter(r => r.status !== 'received' || (r.status === 'partial' && r.receivedAmount < calcNet(r)));
-    
+    const pending = data.records.filter(r => r.status === 'pending' || r.status === 'partial');
+
     if (pending.length === 0) {
         container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎉</div>All caught up!<br>No pending payments.</div>';
         return;
     }
-    
+
     const bySource = {};
     pending.forEach(r => {
         let key, name, type;
@@ -1868,37 +1923,156 @@ function renderVerify() {
             key = 'o-' + r.date + '-' + (r.otherName || '');
             type = 'other';
         }
-        
-        if (!bySource[key]) bySource[key] = { name, type, records: [], total: 0 };
+
+        if (!bySource[key]) bySource[key] = { name, type, records: [], total: 0, alreadyReceived: 0 };
+        const net = calcNet(r);
+        bySource[key].total += net;
+        if (r.status === 'partial' && r.receivedAmount) {
+            bySource[key].alreadyReceived += r.receivedAmount;
+        }
         bySource[key].records.push(r);
-        bySource[key].total += calcNet(r);
     });
-    
+
     container.innerHTML = '';
     Object.entries(bySource).forEach(([key, info]) => {
         const icon = info.type === 'clinic' ? '🏥' : info.type === 'shift' ? '⏰' : '⭐';
+        const remaining = info.total - info.alreadyReceived;
+        const alreadyHtml = info.alreadyReceived > 0
+            ? `<div class="verify-received-badge">✅ Received $${info.alreadyReceived.toFixed(0)} · $${remaining.toFixed(0)} still owed</div>`
+            : '';
+        const dates = [...new Set(info.records.map(r => r.date))].slice(0,2).join(', ');
         container.innerHTML += `
-            <div class="verify-card">
+            <div class="verify-card" onclick="openVerifyModal('${key}', '${info.type}')">
                 <div class="verify-header">
                     <span class="verify-title">${icon} ${escapeHtml(info.name)}</span>
-                    <span class="verify-amount">$${info.total.toFixed(0)}</span>
+                    <span class="verify-amount">$${remaining.toFixed(0)}</span>
                 </div>
-                <div class="verify-details">${info.records.length} pending • ${info.records[0].date}${info.records.some(r => r.status === 'partial') ? ' • (includes partial)' : ''}</div>
-                <button class="sm-btn" onclick="event.stopPropagation(); markReceived('${key}', '${info.type}')" style="margin-top:8px;">✅ Mark Received</button>
+                <div class="verify-details">${info.records.length} record${info.records.length > 1 ? 's' : ''} • ${dates}</div>
+                ${alreadyHtml}
+                <div class="verify-btn-row">
+                    <button class="verify-btn-full" onclick="event.stopPropagation(); markReceived('${key}')">✅ Mark Received</button>
+                    <button class="verify-btn-partial" onclick="event.stopPropagation(); openVerifyModal('${key}', '${info.type}')">💰 Partial</button>
+                </div>
             </div>
         `;
     });
 }
 
-function markReceived(key, type) {
+// ---- Verify payment modal state ----
+let _vpmKey = null, _vpmType = null, _vpmRemaining = 0;
+
+function openVerifyModal(key, type) {
+    // Build group info same as renderVerify
+    const records = data.records.filter(r => {
+        if (r.status !== 'pending' && r.status !== 'partial') return false;
+        let rKey;
+        if (r.type === 'clinic') rKey = 'c-' + r.sourceIndex;
+        else if (r.type === 'shift') rKey = 's-' + r.date + '-' + (r.shiftName || '');
+        else rKey = 'o-' + r.date + '-' + (r.otherName || '');
+        return rKey === key;
+    });
+    if (!records.length) return;
+
+    let name;
+    if (type === 'clinic') {
+        const c = data.clinics[records[0].sourceIndex];
+        name = c ? c.name : 'Unknown Clinic';
+    } else if (type === 'shift') {
+        name = records[0].shiftName || 'Shift';
+    } else {
+        name = records[0].otherName || 'Other';
+    }
+
+    const total = records.reduce((s, r) => s + calcNet(r), 0);
+    const alreadyReceived = records.reduce((s, r) => s + (r.status === 'partial' && r.receivedAmount ? r.receivedAmount : 0), 0);
+    const remaining = total - alreadyReceived;
+
+    _vpmKey = key;
+    _vpmType = type;
+    _vpmRemaining = remaining;
+
+    document.getElementById('vpmName').textContent = name;
+    document.getElementById('vpmSub').textContent = `${records.length} record${records.length > 1 ? 's' : ''} · Total owed $${total.toFixed(0)}`;
+    document.getElementById('vpmOwed').textContent = '$' + remaining.toFixed(0);
+    document.getElementById('vpmAmount').value = '';
+
+    const alreadyRow = document.getElementById('vpmAlreadyRow');
+    if (alreadyReceived > 0) {
+        alreadyRow.style.display = 'flex';
+        document.getElementById('vpmAlready').textContent = '$' + alreadyReceived.toFixed(0);
+    } else {
+        alreadyRow.style.display = 'none';
+    }
+
+    document.getElementById('verifyPayModal').classList.add('open');
+    setTimeout(() => document.getElementById('vpmAmount').focus(), 300);
+}
+
+function closeVerifyPayModal() {
+    document.getElementById('verifyPayModal').classList.remove('open');
+    _vpmKey = null;
+}
+
+function saveVerifyPayment() {
+    const amt = parseFloat(document.getElementById('vpmAmount').value);
+    if (!_vpmKey || isNaN(amt) || amt <= 0) { showToast('Enter a valid amount'); return; }
+
+    if (amt >= _vpmRemaining) {
+        // Entered full or more than remaining — just mark fully received
+        applyVerifyFull();
+        return;
+    }
+
+    // Distribute partial payment across records (oldest first)
+    const records = data.records.filter(r => {
+        if (r.status !== 'pending' && r.status !== 'partial') return false;
+        let rKey;
+        if (r.type === 'clinic') rKey = 'c-' + r.sourceIndex;
+        else if (r.type === 'shift') rKey = 's-' + r.date + '-' + (r.shiftName || '');
+        else rKey = 'o-' + r.date + '-' + (r.otherName || '');
+        return rKey === _vpmKey;
+    }).sort((a, b) => a.date.localeCompare(b.date));
+
+    let leftToApply = amt;
+    records.forEach(r => {
+        if (leftToApply <= 0) return;
+        const net = calcNet(r);
+        const alreadyPaid = r.status === 'partial' && r.receivedAmount ? r.receivedAmount : 0;
+        const stillOwed = net - alreadyPaid;
+        if (leftToApply >= stillOwed) {
+            r.status = 'received';
+            r.receivedAmount = net;
+            leftToApply -= stillOwed;
+        } else {
+            r.status = 'partial';
+            r.receivedAmount = alreadyPaid + leftToApply;
+            leftToApply = 0;
+        }
+    });
+
+    saveData();
+    closeVerifyPayModal();
+    renderVerify();
+    calcTotals();
+    renderCalendar();
+    showToast(`💰 $${amt.toFixed(0)} recorded · remainder tracked`);
+}
+
+function applyVerifyFull() {
+    if (!_vpmKey) return;
+    markReceived(_vpmKey);
+    closeVerifyPayModal();
+    showToast('✅ Marked as fully received');
+}
+
+function markReceived(key) {
     data.records.forEach(r => {
         if (r.status === 'received') return;
         let rKey;
         if (r.type === 'clinic') rKey = 'c-' + r.sourceIndex;
         else if (r.type === 'shift') rKey = 's-' + r.date + '-' + (r.shiftName || '');
         else rKey = 'o-' + r.date + '-' + (r.otherName || '');
-        
-        if (rKey === key) r.status = 'received';
+        if (rKey === key) { r.status = 'received'; r.receivedAmount = calcNet(r); }
     });
     saveData();
     renderVerify();
