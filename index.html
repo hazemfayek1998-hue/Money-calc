@@ -198,63 +198,67 @@
     .period-option { flex: 1; text-align: center; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; color: #666; }
     .period-option.active { background: white; color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     
-    /* Expenses Theme - Red */
-    :root {
-        --expense-primary: #dc2626;
-        --expense-primary-dark: #b91c1c;
-        --expense-bg: #fef2f2;
-    }
+    /* Expenses Sheet */
+    .expense-sheet { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top-left-radius: 24px; border-top-right-radius: 24px; z-index: 500; transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.1); max-height: 88vh; display: flex; flex-direction: column; }
+    .expense-sheet.open { transform: translateY(0); }
+    .expense-sheet-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 499; display: none; }
+    .expense-sheet-backdrop.open { display: block; }
+    .expense-sheet-header { background: #dc2626; color: white; padding: 10px 20px 16px; border-top-left-radius: 24px; border-top-right-radius: 24px; flex-shrink: 0; }
+    .expense-sheet-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.4); border-radius: 2px; margin: 0 auto 10px; }
+    .expense-sheet-title { font-size: 1.1rem; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+    .expense-sheet-close { background: rgba(255,255,255,0.2); border: none; color: white; width: 28px; height: 28px; border-radius: 50%; font-size: 16px; cursor: pointer; }
+    .expense-sheet-body { overflow-y: auto; padding: 16px; flex: 1; }
+    .expense-dot { background: #dc2626; }
 
-    body.expenses-mode {
-        --primary: var(--expense-primary);
-        --primary-dark: var(--expense-primary-dark);
-    }
+    /* ===== LOCK SCREEN ===== */
+    #lockScreen { position:fixed; inset:0; background:linear-gradient(160deg,#0fa25a 0%,#065f38 100%); z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; padding:24px; }
+    #lockScreen .lock-logo { font-size:52px; margin-bottom:8px; }
+    #lockScreen .lock-title { font-size:24px; font-weight:700; margin-bottom:4px; }
+    #lockScreen .lock-msg { font-size:14px; opacity:0.8; margin-bottom:28px; min-height:20px; }
+    .pin-dots { display:flex; gap:18px; margin-bottom:28px; }
+    .pin-dot { width:18px; height:18px; border-radius:50%; border:2.5px solid rgba(255,255,255,0.55); background:transparent; transition:background 0.15s, border-color 0.15s; }
+    .pin-dot.filled { background:white; border-color:white; }
+    .pin-dot.shake { animation:pinShake 0.4s; }
+    @keyframes pinShake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+    .pin-keypad { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:20px; }
+    .pin-key { width:76px; height:76px; border-radius:50%; background:rgba(255,255,255,0.15); border:none; color:white; font-size:24px; font-weight:600; cursor:pointer; transition:background 0.12s, transform 0.1s; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1; }
+    .pin-key .sub { font-size:9px; letter-spacing:1px; opacity:0.7; }
+    .pin-key:active { background:rgba(255,255,255,0.3); transform:scale(0.94); }
+    .pin-key.empty { background:transparent; cursor:default; }
+    .bio-btn { background:rgba(255,255,255,0.18); border:2px solid rgba(255,255,255,0.35); color:white; border-radius:14px; padding:13px 28px; font-size:15px; cursor:pointer; display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+    .lock-error { color:#ffcdd2; font-size:13px; min-height:18px; margin-top:8px; text-align:center; }
+    .lock-forgot { background:none; border:none; color:rgba(255,255,255,0.55); font-size:13px; cursor:pointer; margin-top:16px; text-decoration:underline; }
 
-    body.expenses-mode .top-bar {
-        background: var(--expense-primary);
-    }
+    /* Backup reminder banner */
+    #backupReminder { position:fixed; bottom:70px; left:12px; right:12px; background:#1e293b; color:white; border-radius:14px; padding:14px 16px; z-index:997; display:none; flex-direction:row; align-items:center; gap:12px; box-shadow:0 4px 20px rgba(0,0,0,0.25); animation:slideUp 0.35s ease; }
+    #backupReminder.show { display:flex; }
+    @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+    #backupReminder .br-icon { font-size:26px; flex-shrink:0; }
+    #backupReminder .br-text { flex:1; }
+    #backupReminder .br-title { font-weight:600; font-size:14px; margin-bottom:2px; }
+    #backupReminder .br-sub { font-size:12px; opacity:0.7; }
+    #backupReminder .br-actions { display:flex; gap:8px; flex-shrink:0; }
+    #backupReminder .br-backup { background:#0fa25a; color:white; border:none; border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; }
+    #backupReminder .br-dismiss { background:rgba(255,255,255,0.15); color:white; border:none; border-radius:8px; padding:8px 10px; font-size:13px; cursor:pointer; }
 
-    body.expenses-mode .top-summary {
-        background: var(--expense-primary);
-    }
+    /* Toast */
+    #toastMsg { position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(20px); background:#1e293b; color:white; padding:12px 20px; border-radius:12px; font-size:14px; z-index:9998; opacity:0; pointer-events:none; transition:opacity 0.3s, transform 0.3s; white-space:nowrap; box-shadow:0 4px 16px rgba(0,0,0,0.2); }
+    #toastMsg.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-    body.expenses-mode .choice-chip.active {
-        border-color: var(--expense-primary);
-        background: #fef2f2;
-        color: var(--expense-primary);
-    }
+    /* Security settings */
+    .sec-toggle-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid #f0f0f0; }
+    .sec-toggle-row:last-child { border-bottom:none; }
+    .toggle-switch { position:relative; width:48px; height:26px; }
+    .toggle-switch input { opacity:0; width:0; height:0; }
+    .toggle-slider { position:absolute; inset:0; background:#ccc; border-radius:26px; cursor:pointer; transition:background 0.3s; }
+    .toggle-slider:before { content:''; position:absolute; height:20px; width:20px; left:3px; bottom:3px; background:white; border-radius:50%; transition:transform 0.3s; }
+    .toggle-switch input:checked + .toggle-slider { background:var(--primary); }
+    .toggle-switch input:checked + .toggle-slider:before { transform:translateX(22px); }
 
-    body.expenses-mode .preview-pane {
-        background: #fef2f2;
-        border-left-color: var(--expense-primary);
-    }
-
-    body.expenses-mode .type-btn.active {
-        border-color: var(--expense-primary);
-        background: #fef2f2;
-    }
-
-    body.expenses-mode .calendar-day.has-data {
-        background: #fecaca;
-        color: var(--expense-primary-dark);
-    }
-
-    body.expenses-mode .calendar-day.selected {
-        background: var(--expense-primary);
-    }
-
-    body.expenses-mode .nav-bar button.active {
-        color: var(--expense-primary);
-        border-top-color: var(--expense-primary);
-    }
-
-    body.expenses-mode button.primary {
-        background: var(--expense-primary);
-    }
-
-    body.expenses-mode .status-option.received.active {
-        color: var(--expense-primary);
-    }
+    /* Swipe hint on green header */
+    .swipe-hint { display: flex; flex-direction: column; align-items: center; padding: 4px 0 2px; cursor: pointer; opacity: 0.75; }
+    .swipe-hint-bar { width: 32px; height: 3px; background: rgba(255,255,255,0.6); border-radius: 2px; }
+    .swipe-hint-label { font-size: 10px; color: rgba(255,255,255,0.8); margin-top: 3px; letter-spacing: 0.5px; }
 </style>
 </head>
 <body>
@@ -448,7 +452,7 @@
 </div>
 
 <!-- TOP SUMMARY -->
-<div class="top-summary" id="topSummary">
+<div class="top-summary" id="topSummary" style="cursor:pointer;" onclick="openExpensesSheet()" title="Tap or swipe up for Expenses">
     <div class="tsb">
         <div class="lbl">Received</div>
         <div class="val" id="receivedTotal">$0</div>
@@ -460,6 +464,119 @@
     <div class="tsb">
         <div class="lbl">This Month</div>
         <div class="val" id="monthTotal">$0</div>
+    </div>
+</div>
+<div class="top-summary" id="topSummaryHint" style="background:var(--primary);padding:0 0 6px;border-bottom-left-radius:20px;border-bottom-right-radius:20px;margin-top:-10px;cursor:pointer;" onclick="openExpensesSheet()">
+    <div class="swipe-hint">
+        <div class="swipe-hint-bar"></div>
+        <div class="swipe-hint-label">💸 EXPENSES</div>
+    </div>
+</div>
+
+<!-- EXPENSES BOTTOM SHEET -->
+<!-- BACKUP REMINDER BANNER -->
+<div id="backupReminder">
+    <div class="br-icon">🛡️</div>
+    <div class="br-text">
+        <div class="br-title">Backup reminder</div>
+        <div class="br-sub" id="backupReminderSub">Back up your data to keep it safe</div>
+    </div>
+    <div class="br-actions">
+        <button class="br-backup" onclick="backupData()">Back Up</button>
+        <button class="br-dismiss" onclick="dismissBackupReminder()">✕</button>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div id="toastMsg"></div>
+
+<!-- LOCK SCREEN -->
+<div id="lockScreen" style="display:none;">
+    <div class="lock-logo">💰</div>
+    <div class="lock-title">MoneyCalc Pro</div>
+    <div class="lock-msg" id="lockMsg">Enter your PIN</div>
+    <div class="pin-dots" id="pinDots">
+        <div class="pin-dot" id="pd0"></div>
+        <div class="pin-dot" id="pd1"></div>
+        <div class="pin-dot" id="pd2"></div>
+        <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div id="pinKeypadWrapper">
+        <div class="pin-keypad">
+            <button class="pin-key" onclick="pinKey('1')">1<span class="sub"></span></button>
+            <button class="pin-key" onclick="pinKey('2')">2<span class="sub">ABC</span></button>
+            <button class="pin-key" onclick="pinKey('3')">3<span class="sub">DEF</span></button>
+            <button class="pin-key" onclick="pinKey('4')">4<span class="sub">GHI</span></button>
+            <button class="pin-key" onclick="pinKey('5')">5<span class="sub">JKL</span></button>
+            <button class="pin-key" onclick="pinKey('6')">6<span class="sub">MNO</span></button>
+            <button class="pin-key" onclick="pinKey('7')">7<span class="sub">PQRS</span></button>
+            <button class="pin-key" onclick="pinKey('8')">8<span class="sub">TUV</span></button>
+            <button class="pin-key" onclick="pinKey('9')">9<span class="sub">WXYZ</span></button>
+            <button class="pin-key empty" disabled></button>
+            <button class="pin-key" onclick="pinKey('0')">0</button>
+            <button class="pin-key" onclick="pinDelete()">⌫</button>
+        </div>
+    </div>
+    <button class="bio-btn" id="bioBtn" onclick="authBiometric()" style="display:none;">👆 Use Fingerprint / Face ID</button>
+    <div class="lock-error" id="lockError"></div>
+    <button class="lock-forgot" id="lockForgotBtn" onclick="lockForgotPin()" style="display:none;">Forgot PIN?</button>
+    <button class="lock-forgot" id="usePinBtn" onclick="showPinFallback()" style="display:none;">Use PIN instead</button>
+</div>
+
+<div class="expense-sheet-backdrop" id="expenseSheetBackdrop" onclick="closeExpensesSheet()"></div>
+<div class="expense-sheet" id="expenseSheet">
+    <div class="expense-sheet-header" id="expenseSheetHeaderEl">
+        <div class="expense-sheet-handle"></div>
+        <div class="expense-sheet-title">
+            <span>💸 Expenses</span>
+            <button class="expense-sheet-close" onclick="closeExpensesSheet()">×</button>
+        </div>
+    </div>
+    <div class="expense-sheet-body">
+        <!-- Add Expense Form -->
+        <div style="margin-bottom:16px;">
+            <div style="font-size:13px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Add Expense</div>
+            <div class="type-selector">
+                <div class="type-btn active" id="esheet-food" onclick="selectSheetExpenseType('food', this)">
+                    <span class="icon">🍔</span><span class="label">Food</span>
+                </div>
+                <div class="type-btn" id="esheet-transport" onclick="selectSheetExpenseType('transport', this)">
+                    <span class="icon">🚗</span><span class="label">Transport</span>
+                </div>
+                <div class="type-btn" id="esheet-clothing" onclick="selectSheetExpenseType('clothing', this)">
+                    <span class="icon">👔</span><span class="label">Clothing</span>
+                </div>
+                <div class="type-btn" id="esheet-other" onclick="selectSheetExpenseType('other', this)">
+                    <span class="icon">📦</span><span class="label">Other</span>
+                </div>
+            </div>
+            <input type="hidden" id="sheetExpenseType" value="food">
+            <input type="hidden" id="sheetExpenseEditIdx" value="">
+            <div class="grid" style="margin-bottom:10px;">
+                <input type="date" id="sheetExpenseDate">
+                <input type="number" id="sheetExpenseAmount" placeholder="Amount" inputmode="decimal" oninput="updateSheetExpensePreview()">
+            </div>
+            <input type="text" id="sheetExpenseName" placeholder="Description (e.g. Lunch)">
+            <input type="text" id="sheetExpenseNotes" placeholder="Notes (optional)">
+            <div style="background:#fef2f2;border-left:4px solid #dc2626;border-radius:10px;padding:12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:13px;color:#666;">Total Expense:</span>
+                <span style="font-weight:bold;font-size:1.1rem;color:#dc2626;" id="sheetExpensePreview">$0.00</span>
+            </div>
+            <button onclick="saveSheetExpense()" style="width:100%;padding:14px;background:#dc2626;color:white;border:none;border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer;margin-bottom:8px;">💾 Save Expense</button>
+            <button onclick="clearSheetExpenseForm()" style="width:100%;padding:12px;font-size:14px;border:1px solid #dc2626;border-radius:12px;background:white;color:#dc2626;cursor:pointer;font-weight:600;">Clear</button>
+        </div>
+
+        <!-- Day Expenses -->
+        <div style="border-top:2px solid #f0f0f0;padding-top:16px;margin-bottom:16px;">
+            <div style="font-size:13px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;" id="sheetDayExpensesTitle">Today's Expenses</div>
+            <div id="sheetDailyExpenses"></div>
+        </div>
+
+        <!-- Month Summary -->
+        <div style="border-top:2px solid #f0f0f0;padding-top:16px;">
+            <div style="font-size:13px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Monthly Summary</div>
+            <div id="sheetExpenseSummary"></div>
+        </div>
     </div>
 </div>
 
@@ -621,6 +738,13 @@
             </div>
             <div id="expenseCategoriesList"></div>
         </div>
+        <div class="card" id="securitySettingsCard">
+            <h2>🔐 Security</h2>
+            <div id="securitySettingsContent">
+                <p style="color:#666;font-size:14px;margin:0 0 14px;">Protect your financial data with a PIN and biometric authentication.</p>
+                <div id="secPinStatus"></div>
+            </div>
+        </div>
         <div class="card">
             <h2>🗂️ Backup & Export</h2>
             <button class="primary" onclick="backupData()">⬇️ Download Backup (JSON)</button>
@@ -635,57 +759,16 @@
         </div>
     </section>
 
-    <!-- EXPENSES -->
-    <section id="sec-expenses" style="display:none">
-        <div class="card">
-            <h2>💸 Add Expense</h2>
-            <div class="type-selector">
-                <div class="type-btn active" onclick="selectExpenseType('food', this)">
-                    <span class="icon">🍔</span><span class="label">Food</span>
-                </div>
-                <div class="type-btn" onclick="selectExpenseType('transport', this)">
-                    <span class="icon">🚗</span><span class="label">Transport</span>
-                </div>
-                <div class="type-btn" onclick="selectExpenseType('clothing', this)">
-                    <span class="icon">👔</span><span class="label">Clothing</span>
-                </div>
-                <div class="type-btn" onclick="selectExpenseType('other', this)">
-                    <span class="icon">📦</span><span class="label">Other</span>
-                </div>
-            </div>
-
-            <input type="hidden" id="expenseType" value="food">
-            <input type="hidden" id="expenseEditIdx" value="">
-
-            <div class="grid" style="margin-bottom: 10px;">
-                <input type="date" id="expenseDate">
-                <input type="number" id="expenseAmount" placeholder="Amount" inputmode="decimal">
-            </div>
-
-            <input type="text" id="expenseName" placeholder="Description (e.g., Lunch at restaurant)">
-            <input type="text" id="expenseNotes" placeholder="Notes (optional)">
-
-            <div class="preview-pane" style="margin-top: 14px;">
-                <div class="preview-row">
-                    <span class="lbl">Total Expense:</span>
-                    <span class="val net" id="expensePreview">$0.00</span>
-                </div>
-            </div>
-
-            <button class="primary" onclick="saveExpense()" style="background:#dc2626;">💾 Save Expense</button>
-            <button class="secondary" onclick="clearExpenseForm()">Clear</button>
-        </div>
-
-        <div class="card">
-            <h2>📅 Daily Expenses</h2>
-            <div id="dailyExpenses"></div>
-        </div>
-
-        <div class="card">
-            <h2>📊 Expense Summary</h2>
-            <div id="expenseSummary"></div>
-        </div>
-    </section>
+    <!-- Hidden inputs needed by legacy expense functions -->
+    <input type="hidden" id="expenseType" value="food">
+    <input type="hidden" id="expenseEditIdx" value="">
+    <input type="date" id="expenseDate" style="display:none">
+    <input type="number" id="expenseAmount" style="display:none">
+    <input type="text" id="expenseName" style="display:none">
+    <input type="text" id="expenseNotes" style="display:none">
+    <span id="expensePreview" style="display:none"></span>
+    <div id="dailyExpenses" style="display:none"></div>
+    <div id="expenseSummary" style="display:none"></div>
 
 </div>
 
@@ -693,8 +776,8 @@
     <button id="btn-home" class="active" onclick="showSec('home')"><span class="icon">📅</span>Calendar</button>
     <button id="btn-add" onclick="showSec('add')"><span class="icon">➕</span>Add</button>
     <button id="btn-verify" onclick="showSec('verify')"><span class="icon">✓</span>Verify</button>
-    <button id="btn-expenses" onclick="showSec('expenses')"><span class="icon">💸</span>Expenses</button>
     <button id="btn-stats" onclick="openStatsModal()"><span class="icon">📊</span>Stats</button>
+    <button id="btn-settings" onclick="showSec('settings')"><span class="icon">⚙️</span>Settings</button>
 </nav>
 
 <script>
@@ -715,6 +798,7 @@ function loadData() {
         const parsed = raw ? JSON.parse(raw) : null;
         if (parsed && parsed.clinics) {
             if (!parsed.others) parsed.others = [];
+            if (!parsed.expenses) parsed.expenses = [];
             if (!parsed.settings) parsed.settings = { reminderDay: 28 };
             return parsed;
         }
@@ -769,12 +853,14 @@ function renderCalendar() {
     for (let day = 1; day <= daysInMonth; day++) {
         const dateStr = monthStr + '-' + String(day).padStart(2, '0');
         const dayRecords = data.records.filter(r => r.date === dateStr);
+        const dayExpenses = data.expenses.filter(e => e.date === dateStr);
         const hasData = dayRecords.length > 0;
+        const hasExpenses = dayExpenses.length > 0;
         const isToday = dateStr === today;
         const isSelected = dateStr === selectedDate;
         
         let indicators = '';
-        if (hasData) {
+        if (hasData || hasExpenses) {
             const types = new Set(dayRecords.map(r => r.type));
             const hasPending = dayRecords.some(r => r.status !== 'received');
             indicators = '<div class="day-indicators">';
@@ -782,6 +868,7 @@ function renderCalendar() {
             if (types.has('shift')) indicators += '<div class="day-dot shift"></div>';
             if (types.has('other')) indicators += '<div class="day-dot other"></div>';
             if (hasPending) indicators += '<div class="day-dot" style="background:var(--warning)"></div>';
+            if (hasExpenses) indicators += '<div class="day-dot expense-dot"></div>';
             indicators += '</div>';
         }
         
@@ -825,13 +912,31 @@ function renderDayDetail() {
     const container = document.getElementById('dayDetail');
     const content = document.getElementById('detailContent');
     const records = data.records.filter(r => r.date === selectedDate);
+    const dayExpenses = data.expenses.filter(e => e.date === selectedDate);
     
     document.getElementById('detailDate').textContent = new Date(selectedDate).toLocaleDateString('en-US', { 
         weekday: 'long', month: 'long', day: 'numeric' 
     });
     
-    if (records.length === 0) {
+    if (records.length === 0 && dayExpenses.length === 0) {
         content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div>No earnings recorded.<br>Tap + Add to create one.</div>';
+        container.style.display = 'block';
+        return;
+    }
+    
+    if (records.length === 0) {
+        content.innerHTML = '';
+        // show only expenses section
+        const expIcons = { food: '🍔', transport: '🚗', clothing: '👔', other: '📦' };
+        const expHtml = dayExpenses.map(e => `
+            <div class="income-item" style="border-left-color:#dc2626;">
+                <div class="income-item-info">
+                    <div class="income-item-title">${expIcons[e.type]||'📦'} ${e.name}</div>
+                    <div class="income-item-sub">${e.notes||''}</div>
+                </div>
+                <div class="income-item-amount" style="color:#dc2626;">-$${e.amount.toFixed(0)}</div>
+            </div>`).join('');
+        content.innerHTML = '<div style="font-size:12px;color:#dc2626;font-weight:600;margin-bottom:6px;">💸 Expenses</div>' + expHtml;
         container.style.display = 'block';
         return;
     }
@@ -942,6 +1047,25 @@ function renderDayDetail() {
     totalDiv.style.cssText = 'text-align:right; margin-top:12px; padding-top:12px; border-top:2px solid #f0f0f0;';
     totalDiv.innerHTML = `<strong>Day Total: $${dayTotal.toFixed(2)}</strong>`;
     content.appendChild(totalDiv);
+
+    // Show expenses for the day if any
+    if (dayExpenses.length > 0) {
+        const expSection = document.createElement('div');
+        expSection.style.cssText = 'margin-top:14px; padding-top:14px; border-top:2px solid #fecaca;';
+        const expIcons = { food: '🍔', transport: '🚗', clothing: '👔', other: '📦' };
+        const expTotal = dayExpenses.reduce((s, e) => s + e.amount, 0);
+        expSection.innerHTML = '<div style="font-size:12px;color:#dc2626;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">💸 Expenses</div>' +
+            dayExpenses.map(e => `
+                <div class="income-item" style="border-left-color:#dc2626;margin-bottom:6px;">
+                    <div class="income-item-info">
+                        <div class="income-item-title">${expIcons[e.type]||'📦'} ${e.name}</div>
+                        ${e.notes ? `<div class="income-item-sub">${e.notes}</div>` : ''}
+                    </div>
+                    <div class="income-item-amount" style="color:#dc2626;">-$${e.amount.toFixed(0)}</div>
+                </div>`).join('') +
+            `<div style="text-align:right;margin-top:6px;"><span style="color:#dc2626;font-weight:bold;">Expenses: -$${expTotal.toFixed(0)}</span></div>`;
+        content.appendChild(expSection);
+    }
     
     container.style.display = 'block';
 }
@@ -2029,6 +2153,9 @@ function backupData() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    localStorage.setItem('moneycalc_last_backup', new Date().toISOString());
+    hideBackupReminder();
+    showToast('✅ Backup saved! Keep it somewhere safe.');
 }
 
 function restoreFromFile(file) {
@@ -2131,8 +2258,7 @@ let currentExpenseType = 'food';
 function selectExpenseType(type, el) {
     currentExpenseType = type;
     document.getElementById('expenseType').value = type;
-    document.querySelectorAll('#sec-expenses .type-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
+    if (el) el.classList.add('active');
     updateExpensePreview();
 }
 
@@ -2186,7 +2312,8 @@ function clearExpenseForm() {
     document.getElementById('expenseName').value = '';
     document.getElementById('expenseNotes').value = '';
     document.getElementById('expensePreview').textContent = '$0.00';
-    selectExpenseType('food', document.querySelector('#sec-expenses .type-btn'));
+    currentExpenseType = 'food';
+    document.getElementById('expenseType').value = 'food';
 }
 
 function renderDailyExpenses() {
@@ -2228,8 +2355,8 @@ function editExpense(idx) {
     document.getElementById('expenseName').value = e.name;
     document.getElementById('expenseNotes').value = e.notes || '';
 
-    const typeBtn = e.type === 'food' ? 0 : e.type === 'transport' ? 1 : e.type === 'clothing' ? 2 : 3;
-    selectExpenseType(e.type, document.querySelectorAll('#sec-expenses .type-btn')[typeBtn]);
+    currentExpenseType = e.type;
+    document.getElementById('expenseType').value = e.type;
     updateExpensePreview();
 }
 
@@ -2279,69 +2406,175 @@ function updateProfitDisplay() {
 
 let touchStartX = 0;
 let touchStartY = 0;
+let swipeTarget = null;
 
-const topBar = document.querySelector('.top-bar');
-if (topBar) {
-    topBar.addEventListener('touchstart', handleTouchStart, { passive: true });
-    topBar.addEventListener('touchend', handleTouchEnd, { passive: true });
-    topBar.addEventListener('mousedown', handleMouseStart);
-    topBar.addEventListener('mouseup', handleMouseEnd);
+function attachSwipeListeners(el) {
+    if (!el) return;
+    el.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; swipeTarget = 'greenbar'; }, { passive: true });
+    el.addEventListener('touchend', e => { if (swipeTarget === 'greenbar') handleGreenSwipe(e.changedTouches[0].clientY); swipeTarget = null; }, { passive: true });
 }
 
-function handleTouchStart(e) {
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-}
+attachSwipeListeners(document.querySelector('.top-bar'));
+attachSwipeListeners(document.getElementById('topSummary'));
+attachSwipeListeners(document.getElementById('topSummaryHint'));
 
-function handleMouseStart(e) {
-    touchStartX = e.clientX;
-    touchStartY = e.clientY;
-}
-
-function handleTouchEnd(e) {
-    handleSwipe(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-}
-
-function handleMouseEnd(e) {
-    handleSwipe(e.clientX, e.clientY);
-}
-
-function handleSwipe(endX, endY) {
-    const diffX = endX - touchStartX;
+function handleGreenSwipe(endY) {
     const diffY = endY - touchStartY;
-
-    // Only handle horizontal swipes
-    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-        const currentSec = ['home', 'add', 'verify', 'expenses', 'settings'].find(s => 
-            document.getElementById('sec-' + s)?.style.display !== 'none'
-        );
-
-        const sections = ['home', 'add', 'verify', 'expenses', 'settings'];
-        const currentIdx = sections.indexOf(currentSec);
-
-        if (diffX < 0 && currentIdx < sections.length - 1) {
-            // Swipe left - next section
-            showSec(sections[currentIdx + 1]);
-        } else if (diffX > 0 && currentIdx > 0) {
-            // Swipe right - previous section
-            showSec(sections[currentIdx - 1]);
-        }
+    // Swipe up (negative diffY) on green area → open expenses
+    if (diffY < -30) {
+        openExpensesSheet();
     }
 }
 
-// ========== UPDATED SHOWSEC FOR EXPENSES ==========
+// ========== EXPENSES BOTTOM SHEET ==========
+
+let sheetExpenseType = 'food';
+
+function openExpensesSheet() {
+    document.getElementById('expenseSheet').classList.add('open');
+    document.getElementById('expenseSheetBackdrop').classList.add('open');
+    document.getElementById('sheetExpenseDate').value = selectedDate;
+    renderSheetDailyExpenses();
+    renderSheetExpenseSummary();
+}
+
+function closeExpensesSheet() {
+    document.getElementById('expenseSheet').classList.remove('open');
+    document.getElementById('expenseSheetBackdrop').classList.remove('open');
+}
+
+function selectSheetExpenseType(type, el) {
+    sheetExpenseType = type;
+    document.getElementById('sheetExpenseType').value = type;
+    document.querySelectorAll('#expenseSheet .type-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function updateSheetExpensePreview() {
+    const amount = Number(document.getElementById('sheetExpenseAmount').value) || 0;
+    document.getElementById('sheetExpensePreview').textContent = '$' + amount.toFixed(2);
+}
+
+function saveSheetExpense() {
+    const date = document.getElementById('sheetExpenseDate').value;
+    const amount = Number(document.getElementById('sheetExpenseAmount').value) || 0;
+    const name = document.getElementById('sheetExpenseName').value.trim();
+    const notes = document.getElementById('sheetExpenseNotes').value;
+    const type = document.getElementById('sheetExpenseType').value;
+
+    if (!date) return alert('Please select a date');
+    if (amount <= 0) return alert('Please enter an amount');
+
+    const expense = { date, type, amount, name: name || getExpenseTypeName(type), notes };
+
+    const editIdx = document.getElementById('sheetExpenseEditIdx').value;
+    if (editIdx !== '') {
+        data.expenses[parseInt(editIdx)] = expense;
+    } else {
+        data.expenses.push(expense);
+    }
+
+    saveData();
+    clearSheetExpenseForm();
+    renderSheetDailyExpenses();
+    renderSheetExpenseSummary();
+    calcTotals();
+    renderCalendar();
+}
+
+function clearSheetExpenseForm() {
+    document.getElementById('sheetExpenseEditIdx').value = '';
+    document.getElementById('sheetExpenseDate').value = selectedDate;
+    document.getElementById('sheetExpenseAmount').value = '';
+    document.getElementById('sheetExpenseName').value = '';
+    document.getElementById('sheetExpenseNotes').value = '';
+    document.getElementById('sheetExpensePreview').textContent = '$0.00';
+    sheetExpenseType = 'food';
+    document.getElementById('sheetExpenseType').value = 'food';
+    document.querySelectorAll('#expenseSheet .type-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+}
+
+function renderSheetDailyExpenses() {
+    const container = document.getElementById('sheetDailyExpenses');
+    const dateVal = document.getElementById('sheetExpenseDate').value || selectedDate;
+    const dayExpenses = data.expenses.filter(e => e.date === dateVal);
+    const dateLabel = new Date(dateVal).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    document.getElementById('sheetDayExpensesTitle').textContent = dateLabel + ' Expenses';
+
+    if (dayExpenses.length === 0) {
+        container.innerHTML = '<p style="text-align:center;color:#999;padding:16px 0;">No expenses for this day</p>';
+        return;
+    }
+
+    const icons = { food: '🍔', transport: '🚗', clothing: '👔', other: '📦' };
+    container.innerHTML = dayExpenses.map((e) => {
+        const actualIdx = data.expenses.findIndex(exp => exp === e);
+        return `
+            <div class="income-item" style="border-left-color:#dc2626;">
+                <div class="income-item-info">
+                    <div class="income-item-title">${icons[e.type] || '📦'} ${e.name}</div>
+                    <div class="income-item-sub">${e.notes || ''}</div>
+                </div>
+                <div style="text-align:right;">
+                    <div class="income-item-amount" style="color:#dc2626;">-$${e.amount.toFixed(0)}</div>
+                    <button class="sm-btn outline" onclick="editSheetExpense(${actualIdx})" style="margin-right:4px;font-size:11px;padding:3px 7px;">✏️</button>
+                    <button class="sm-btn outline" onclick="deleteSheetExpense(${actualIdx})" style="color:#dc2626;border-color:#dc2626;font-size:11px;padding:3px 7px;">🗑️</button>
+                </div>
+            </div>`;
+    }).join('');
+}
+
+function editSheetExpense(idx) {
+    const e = data.expenses[idx];
+    if (!e) return;
+    document.getElementById('sheetExpenseEditIdx').value = idx;
+    document.getElementById('sheetExpenseDate').value = e.date;
+    document.getElementById('sheetExpenseAmount').value = e.amount;
+    document.getElementById('sheetExpenseName').value = e.name;
+    document.getElementById('sheetExpenseNotes').value = e.notes || '';
+    selectSheetExpenseType(e.type, document.getElementById('esheet-' + e.type) || document.querySelectorAll('#expenseSheet .type-btn')[3]);
+    updateSheetExpensePreview();
+}
+
+function deleteSheetExpense(idx) {
+    if (!confirm('Delete this expense?')) return;
+    data.expenses.splice(idx, 1);
+    saveData();
+    renderSheetDailyExpenses();
+    renderSheetExpenseSummary();
+    calcTotals();
+    renderCalendar();
+}
+
+function renderSheetExpenseSummary() {
+    const container = document.getElementById('sheetExpenseSummary');
+    const monthStr = new Date().toISOString().slice(0, 7);
+    const monthExpenses = data.expenses.filter(e => e.date.startsWith(monthStr));
+    const byType = { food: 0, transport: 0, clothing: 0, other: 0 };
+    monthExpenses.forEach(e => byType[e.type] = (byType[e.type] || 0) + e.amount);
+    const total = Object.values(byType).reduce((a, b) => a + b, 0);
+    const icons = { food: '🍔', transport: '🚗', clothing: '👔', other: '📦' };
+    const names = { food: 'Food', transport: 'Transport', clothing: 'Clothing', other: 'Other' };
+    container.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;">
+            ${Object.entries(byType).map(([type, amount]) => `
+                <div style="background:#fef2f2;padding:12px;border-radius:10px;">
+                    <div style="font-size:11px;color:#666;">${icons[type]} ${names[type]}</div>
+                    <div style="font-size:1.1rem;font-weight:bold;color:#dc2626;">$${amount.toFixed(0)}</div>
+                </div>`).join('')}
+        </div>
+        <div style="background:#dc2626;color:white;padding:14px;border-radius:10px;text-align:center;">
+            <div style="font-size:11px;opacity:0.9;">Total Expenses This Month</div>
+            <div style="font-size:1.4rem;font-weight:bold;">$${total.toFixed(0)}</div>
+        </div>`;
+}
+
+// ========== UPDATED SHOWSEC ==========
 
 const originalShowSec = showSec;
 showSec = function(id) {
-    // Toggle expenses mode
-    if (id === 'expenses') {
-        document.body.classList.add('expenses-mode');
-    } else {
-        document.body.classList.remove('expenses-mode');
-    }
-
     // Hide all sections
-    ['home', 'add', 'verify', 'expenses', 'settings'].forEach(s => {
+    ['home', 'add', 'verify', 'settings'].forEach(s => {
         const sec = document.getElementById('sec-' + s);
         if (sec) sec.style.display = 'none';
         const btn = document.getElementById('btn-' + s);
@@ -2357,19 +2590,15 @@ showSec = function(id) {
 
     // Show/hide top summary
     const topSummary = document.getElementById('topSummary');
-    if (topSummary) {
-        topSummary.style.display = (id === 'home' || id === 'verify' || id === 'expenses') ? 'flex' : 'none';
-    }
+    const topSummaryHint = document.getElementById('topSummaryHint');
+    const showTop = (id === 'home' || id === 'verify');
+    if (topSummary) topSummary.style.display = showTop ? 'flex' : 'none';
+    if (topSummaryHint) topSummaryHint.style.display = showTop ? 'flex' : 'none';
 
     // Section-specific rendering
     if (id === 'home') { renderCalendar(); calcTotals(); }
     if (id === 'add') { refreshSelectors(); document.getElementById('recDate').value = selectedDate; }
     if (id === 'verify') { renderVerify(); }
-    if (id === 'expenses') { 
-        document.getElementById('expenseDate').value = selectedDate;
-        renderDailyExpenses(); 
-        renderExpenseSummary();
-    }
     if (id === 'settings') { refreshSettings(); }
 };
 
@@ -2490,8 +2719,7 @@ function exportExpenseCSV() {
         '"' + (e.notes || '').replace(/"/g, '""') + '"'
     ].join(','));
 
-    const csv = [headers.join(','), ...rows].join('
-');
+    const csv = [headers.join(','), ...rows].join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -2527,6 +2755,429 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
+
+// ========== SECURITY: PIN + BIOMETRIC ==========
+
+const SEC_KEY = 'moneycalc_security';
+
+function loadSec() {
+    try { return JSON.parse(localStorage.getItem(SEC_KEY)) || {}; } catch(e) { return {}; }
+}
+function saveSec(obj) { localStorage.setItem(SEC_KEY, JSON.stringify(obj)); }
+
+async function hashPin(pin) {
+    const enc = new TextEncoder().encode(pin + 'moneycalc_salt_v1');
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// ---- Lock state ----
+let lockMode = 'unlock';   // 'unlock' | 'setup' | 'confirm' | 'disable' | 'change'
+let lockBuffer = '';
+let lockSetupPin = '';
+let lockUnlocked = false;
+
+function initSecurity() {
+    const sec = loadSec();
+    if (sec.enabled && sec.pinHash) {
+        showLockScreen();
+    } else {
+        lockUnlocked = true;
+    }
+    renderSecuritySettings();
+}
+
+function showLockScreen() {
+    lockMode = 'unlock';
+    lockBuffer = '';
+    lockSetupPin = '';
+    lockUnlocked = false;
+    document.getElementById('lockScreen').style.display = 'flex';
+    document.getElementById('lockError').textContent = '';
+    updatePinDots();
+
+    const sec = loadSec();
+    const bioBtn = document.getElementById('bioBtn');
+    const keypad = document.getElementById('pinKeypadWrapper');
+    const pinDots = document.getElementById('pinDots');
+    const forgotBtn = document.getElementById('lockForgotBtn');
+    const usePinBtn = document.getElementById('usePinBtn');
+
+    if (sec.bioEnabled && sec.bioCredential) {
+        // Biometric mode: hide PIN keypad, show fingerprint button + "use PIN instead"
+        bioBtn.style.display = 'flex';
+        keypad.style.display = 'none';
+        pinDots.style.display = 'none';
+        forgotBtn.style.display = 'none';
+        usePinBtn.style.display = 'block';
+        document.getElementById('lockMsg').textContent = 'Touch the sensor to unlock';
+        setTimeout(() => authBiometric(), 400);
+    } else {
+        // PIN mode
+        bioBtn.style.display = 'none';
+        keypad.style.display = 'block';
+        pinDots.style.display = 'flex';
+        forgotBtn.style.display = 'block';
+        usePinBtn.style.display = 'none';
+        document.getElementById('lockMsg').textContent = 'Enter your PIN';
+    }
+}
+
+function showPinFallback() {
+    // User chose PIN after biometric
+    const keypad = document.getElementById('pinKeypadWrapper');
+    const pinDots = document.getElementById('pinDots');
+    const bioBtn = document.getElementById('bioBtn');
+    const forgotBtn = document.getElementById('lockForgotBtn');
+    const usePinBtn = document.getElementById('usePinBtn');
+    lockBuffer = '';
+    keypad.style.display = 'block';
+    pinDots.style.display = 'flex';
+    bioBtn.style.display = 'none';
+    forgotBtn.style.display = 'block';
+    usePinBtn.style.display = 'none';
+    document.getElementById('lockMsg').textContent = 'Enter your PIN';
+    updatePinDots();
+}
+
+function hideLockScreen() {
+    document.getElementById('lockScreen').style.display = 'none';
+    lockUnlocked = true;
+}
+
+function updatePinDots() {
+    for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById('pd' + i);
+        if (dot) dot.classList.toggle('filled', i < lockBuffer.length);
+    }
+}
+
+function pinKey(digit) {
+    if (lockBuffer.length >= 4) return;
+    lockBuffer += digit;
+    updatePinDots();
+    document.getElementById('lockError').textContent = '';
+    if (lockBuffer.length === 4) {
+        setTimeout(() => handlePinComplete(), 150);
+    }
+}
+
+function pinDelete() {
+    lockBuffer = lockBuffer.slice(0, -1);
+    updatePinDots();
+}
+
+async function handlePinComplete() {
+    const sec = loadSec();
+
+    if (lockMode === 'unlock') {
+        const hash = await hashPin(lockBuffer);
+        if (hash === sec.pinHash) {
+            hideLockScreen();
+        } else {
+            pinError('Incorrect PIN. Try again.');
+        }
+
+    } else if (lockMode === 'setup') {
+        lockSetupPin = lockBuffer;
+        lockBuffer = '';
+        lockMode = 'confirm';
+        document.getElementById('lockMsg').textContent = 'Confirm your PIN';
+        updatePinDots();
+
+    } else if (lockMode === 'confirm') {
+        if (lockBuffer === lockSetupPin) {
+            const hash = await hashPin(lockBuffer);
+            const s = loadSec();
+            s.enabled = true;
+            s.pinHash = hash;
+            saveSec(s);
+            hideLockScreen();
+            renderSecuritySettings();
+            alert('PIN set successfully! Your app is now protected.');
+        } else {
+            pinError("PINs don't match. Try again.");
+            lockMode = 'setup';
+            lockSetupPin = '';
+            document.getElementById('lockMsg').textContent = 'Enter new PIN';
+        }
+
+    } else if (lockMode === 'disable') {
+        const hash = await hashPin(lockBuffer);
+        if (hash === sec.pinHash) {
+            const s = loadSec();
+            s.enabled = false;
+            s.pinHash = null;
+            s.bioEnabled = false;
+            s.bioCredential = null;
+            saveSec(s);
+            hideLockScreen();
+            renderSecuritySettings();
+            alert('Lock removed. App is no longer protected.');
+        } else {
+            pinError('Incorrect PIN.');
+        }
+
+    } else if (lockMode === 'change') {
+        const hash = await hashPin(lockBuffer);
+        if (hash === sec.pinHash) {
+            lockMode = 'setup';
+            lockSetupPin = '';
+            lockBuffer = '';
+            document.getElementById('lockMsg').textContent = 'Enter new PIN';
+            updatePinDots();
+        } else {
+            pinError('Incorrect current PIN.');
+        }
+    }
+}
+
+function pinError(msg) {
+    document.getElementById('lockError').textContent = msg;
+    lockBuffer = '';
+    updatePinDots();
+    const dots = document.getElementById('pinDots');
+    dots.classList.add('shake');
+    setTimeout(() => dots.classList.remove('shake'), 450);
+}
+
+// ---- Biometric (WebAuthn) ----
+async function registerBiometric() {
+    if (!window.PublicKeyCredential) {
+        alert('Biometric authentication is not supported on this device/browser.');
+        return;
+    }
+    try {
+        const challenge = crypto.getRandomValues(new Uint8Array(32));
+        const credential = await navigator.credentials.create({
+            publicKey: {
+                challenge,
+                rp: { name: 'MoneyCalc Pro', id: location.hostname },
+                user: {
+                    id: new TextEncoder().encode('moneycalc-user'),
+                    name: 'MoneyCalc User',
+                    displayName: 'MoneyCalc User'
+                },
+                pubKeyCredParams: [{ alg: -7, type: 'public-key' }, { alg: -257, type: 'public-key' }],
+                authenticatorSelection: {
+                    userVerification: 'required',
+                    residentKey: 'preferred'
+                },
+                timeout: 60000
+            }
+        });
+        const s = loadSec();
+        s.bioEnabled = true;
+        s.bioCredential = Array.from(new Uint8Array(credential.rawId)).join(',');
+        saveSec(s);
+        renderSecuritySettings();
+        alert('Fingerprint / Face ID registered successfully!');
+    } catch(e) {
+        if (e.name !== 'NotAllowedError') {
+            alert('Biometric setup failed: ' + e.message);
+        }
+    }
+}
+
+async function authBiometric() {
+    if (!window.PublicKeyCredential) return;
+    const sec = loadSec();
+    if (!sec.bioCredential) return;
+    try {
+        const credId = new Uint8Array(sec.bioCredential.split(',').map(Number));
+        const challenge = crypto.getRandomValues(new Uint8Array(32));
+        await navigator.credentials.get({
+            publicKey: {
+                challenge,
+                allowCredentials: [{ id: credId, type: 'public-key' }],
+                userVerification: 'required',
+                timeout: 60000
+            }
+        });
+        hideLockScreen();
+    } catch(e) {
+        if (e.name !== 'NotAllowedError') {
+            document.getElementById('lockError').textContent = 'Biometric failed. Use PIN instead.';
+        }
+    }
+}
+
+// ---- Forgot PIN ----
+function lockForgotPin() {
+    const ok = confirm('⚠️ Forgot PIN?\n\nTo reset, your data will need to be restored from a backup file. Do you want to erase the lock and continue? (Your data stays, only the lock is removed — but make sure you have a backup.)');
+    if (!ok) return;
+    const s = loadSec();
+    s.enabled = false;
+    s.pinHash = null;
+    s.bioEnabled = false;
+    s.bioCredential = null;
+    saveSec(s);
+    hideLockScreen();
+    renderSecuritySettings();
+}
+
+// ---- Security Settings UI ----
+function renderSecuritySettings() {
+    const sec = loadSec();
+    const container = document.getElementById('secPinStatus');
+    if (!container) return;
+
+    if (!sec.enabled) {
+        container.innerHTML = `
+            <div style="text-align:center;padding:8px 0 16px;">
+                <div style="font-size:40px;margin-bottom:8px;">🔓</div>
+                <div style="color:#888;font-size:14px;margin-bottom:16px;">No lock is set. Your data is unprotected.</div>
+                <button class="primary" onclick="startSetupPin()" style="margin:0;">🔐 Enable PIN Lock</button>
+            </div>`;
+    } else {
+        container.innerHTML = `
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;">
+                <span style="font-size:28px;">🔒</span>
+                <div>
+                    <div style="font-weight:600;color:#065f38;">PIN Lock Active</div>
+                    <div style="font-size:12px;color:#666;">Your data is protected</div>
+                </div>
+            </div>
+            <div class="sec-toggle-row">
+                <div>
+                    <div style="font-weight:500;">Fingerprint / Face ID</div>
+                    <div style="font-size:12px;color:#888;">${sec.bioEnabled ? 'Biometric is registered' : 'Faster unlock with biometrics'}</div>
+                </div>
+                <button class="sm-btn ${sec.bioEnabled ? 'outline' : ''}" onclick="${sec.bioEnabled ? 'removeBiometric()' : 'setupBiometricFlow()'}">
+                    ${sec.bioEnabled ? 'Remove' : 'Set Up'}
+                </button>
+            </div>
+            <div class="sec-toggle-row">
+                <div style="font-weight:500;">Change PIN</div>
+                <button class="sm-btn outline" onclick="startChangePin()">Change</button>
+            </div>
+            <div class="sec-toggle-row">
+                <div style="font-weight:500;color:#dc2626;">Remove Lock</div>
+                <button class="sm-btn outline" style="border-color:#dc2626;color:#dc2626;" onclick="startDisableLock()">Remove</button>
+            </div>`;
+    }
+}
+
+function startSetupPin() {
+    lockMode = 'setup';
+    lockBuffer = '';
+    lockSetupPin = '';
+    document.getElementById('lockMsg').textContent = 'Set a new 4-digit PIN';
+    document.getElementById('lockError').textContent = '';
+    document.getElementById('bioBtn').style.display = 'none';
+    document.getElementById('lockScreen').style.display = 'flex';
+    updatePinDots();
+}
+
+function startChangePin() {
+    lockMode = 'change';
+    lockBuffer = '';
+    document.getElementById('lockMsg').textContent = 'Enter current PIN';
+    document.getElementById('lockError').textContent = '';
+    document.getElementById('bioBtn').style.display = 'none';
+    document.getElementById('lockScreen').style.display = 'flex';
+    updatePinDots();
+}
+
+function startDisableLock() {
+    lockMode = 'disable';
+    lockBuffer = '';
+    document.getElementById('lockMsg').textContent = 'Enter PIN to remove lock';
+    document.getElementById('lockError').textContent = '';
+    document.getElementById('bioBtn').style.display = 'none';
+    document.getElementById('lockScreen').style.display = 'flex';
+    updatePinDots();
+}
+
+async function setupBiometricFlow() {
+    const sec = loadSec();
+    if (!sec.enabled) { alert('Set a PIN first.'); return; }
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+        alert('Biometric authentication requires HTTPS. Please use the deployed version of the app.');
+        return;
+    }
+    await registerBiometric();
+}
+
+function removeBiometric() {
+    if (!confirm('Remove fingerprint / Face ID?')) return;
+    const s = loadSec();
+    s.bioEnabled = false;
+    s.bioCredential = null;
+    saveSec(s);
+    renderSecuritySettings();
+}
+
+// Auto-lock on visibility change (when user switches away from app)
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    const sec = loadSec();
+    if (sec.enabled && sec.pinHash && lockUnlocked) {
+        showLockScreen();
+    }
+});
+
+// Init security on load
+initSecurity();
+
+// ========== AUTO BACKUP REMINDER ==========
+
+const BACKUP_INTERVAL_DAYS = 7;
+
+function checkBackupReminder() {
+    const last = localStorage.getItem('moneycalc_last_backup');
+    const dismissed = localStorage.getItem('moneycalc_backup_dismissed_today');
+    const today = new Date().toISOString().slice(0, 10);
+
+    // Don't show if dismissed today
+    if (dismissed === today) return;
+
+    // Always show on first use (no backup ever done)
+    if (!last) {
+        // Only nudge if user has some data worth backing up
+        const hasData = data.records.length > 0 || data.clinics.length > 0;
+        if (!hasData) return;
+        document.getElementById('backupReminderSub').textContent = 'You have never backed up your data.';
+        showBackupReminder();
+        return;
+    }
+
+    const daysSince = Math.floor((Date.now() - new Date(last).getTime()) / 86400000);
+    if (daysSince >= BACKUP_INTERVAL_DAYS) {
+        document.getElementById('backupReminderSub').textContent =
+            daysSince === 1 ? 'Last backup was 1 day ago.' : `Last backup was ${daysSince} days ago.`;
+        showBackupReminder();
+    }
+}
+
+function showBackupReminder() {
+    const el = document.getElementById('backupReminder');
+    el.classList.add('show');
+}
+
+function hideBackupReminder() {
+    const el = document.getElementById('backupReminder');
+    el.classList.remove('show');
+}
+
+function dismissBackupReminder() {
+    hideBackupReminder();
+    // Suppress for the rest of today
+    localStorage.setItem('moneycalc_backup_dismissed_today', new Date().toISOString().slice(0, 10));
+}
+
+// Show toast notification
+let toastTimer = null;
+function showToast(msg, duration = 3000) {
+    const el = document.getElementById('toastMsg');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), duration);
+}
+
+// Check reminder after a short delay (let app fully load first)
+setTimeout(checkBackupReminder, 2000);
 
 </script>
 
